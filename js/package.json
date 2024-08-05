@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.8.0",
+    "globals": "^15.9.0"
+  },
+  "dependencies": {
+    "require": "^2.4.20"
+  },
+  "bin": {
+    "execute": "index.js"
+  }
+}

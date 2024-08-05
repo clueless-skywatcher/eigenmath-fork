@@ -8,5 +8,8 @@ check:
 	make -s -C ../tools wcheck
 	../tools/wcheck src/*.js
 
+nocopy:
+	npx eigenmath.js
+
 clean:
 	rm -f eigenmath.js

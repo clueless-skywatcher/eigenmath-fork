@@ -13,3 +13,5 @@ wcheck
 make-prototypes
 project.xcworkspace
 xcuserdata
+node_modules/
+package-lock.json

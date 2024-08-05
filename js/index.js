@@ -26,21 +26,18 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 function
-alloc_matrix(nrow, ncol)
-{
+	alloc_matrix(nrow, ncol) {
 	var p = alloc_tensor();
 	p.dim[0] = nrow;
 	p.dim[1] = ncol;
 	return p;
 }
 function
-alloc_tensor()
-{
-	return {dim:[], elem:[]};
+	alloc_tensor() {
+	return { dim: [], elem: [] };
 }
 function
-alloc_vector(n)
-{
+	alloc_vector(n) {
 	var p = alloc_tensor();
 	p.dim[0] = n;
 	return p;
@@ -48,8 +45,7 @@ alloc_vector(n)
 const BIGM = 0x1000000; // 24 bits
 
 function
-bignum_int(n)
-{
+	bignum_int(n) {
 	var u = [];
 
 	if (n < BIGM)
@@ -63,8 +59,7 @@ bignum_int(n)
 }
 
 function
-bignum_copy(u)
-{
+	bignum_copy(u) {
 	var i, v = [];
 	for (i = 0; i < u.length; i++)
 		v[i] = u[i];
@@ -74,33 +69,28 @@ bignum_copy(u)
 // remove leading zeroes
 
 function
-bignum_norm(u)
-{
+	bignum_norm(u) {
 	while (u.length > 1 && u[u.length - 1] == 0)
 		u.pop();
 }
 
 function
-bignum_iszero(u)
-{
+	bignum_iszero(u) {
 	return bignum_equal(u, 0);
 }
 
 function
-bignum_equal(u, n)
-{
+	bignum_equal(u, n) {
 	return u.length == 1 && u[0] == n;
 }
 
 function
-bignum_odd(u)
-{
+	bignum_odd(u) {
 	return u[0] % 2 == 1;
 }
 
 function
-bignum_float(u)
-{
+	bignum_float(u) {
 	var d, i;
 
 	d = 0;
@@ -117,8 +107,7 @@ bignum_float(u)
 // convert bignum to int32
 
 function
-bignum_smallnum(u)
-{
+	bignum_smallnum(u) {
 	if (u.length == 1)
 		return u[0];
 
@@ -129,14 +118,12 @@ bignum_smallnum(u)
 }
 
 function
-bignum_issmallnum(u)
-{
+	bignum_issmallnum(u) {
 	return u.length == 1 || (u.length == 2 && u[1] < 128);
 }
 
 function
-push_bignum(sign, a, b)
-{
+	push_bignum(sign, a, b) {
 	// normalize zero
 
 	if (bignum_iszero(a)) {
@@ -145,11 +132,10 @@ push_bignum(sign, a, b)
 			b = bignum_int(1);
 	}
 
-	push({sign:sign, a:a, b:b});
+	push({ sign: sign, a: a, b: b });
 }
 function
-bignum_add(u, v)
-{
+	bignum_add(u, v) {
 	var i, nu, nv, nw, t, w = [];
 
 	nu = u.length;
@@ -187,8 +173,7 @@ bignum_add(u, v)
 // convert string to bignum (7 decimal digits fits in 24 bits)
 
 function
-bignum_atoi(s)
-{
+	bignum_atoi(s) {
 	var a, b, k;
 	a = bignum_int(0);
 	if (s.length == 0)
@@ -210,8 +195,7 @@ bignum_atoi(s)
 	return a;
 }
 function
-bignum_cmp(u, v)
-{
+	bignum_cmp(u, v) {
 	var i;
 
 	if (u.length < v.length)
@@ -232,8 +216,7 @@ bignum_cmp(u, v)
 // floor(u / v)
 
 function
-bignum_div(u, v)
-{
+	bignum_div(u, v) {
 	var a, b, i, k, nu, nv, q, qhat, t, w;
 
 	nu = u.length;
@@ -325,8 +308,7 @@ bignum_div(u, v)
 	return q;
 }
 function
-bignum_gcd(u, v)
-{
+	bignum_gcd(u, v) {
 	var r;
 
 	if (u.length == 1 && v.length == 1) {
@@ -349,8 +331,7 @@ bignum_gcd(u, v)
 	return bignum_copy(u);
 }
 function
-bignum_itoa(u)
-{
+	bignum_itoa(u) {
 	var d, r, s;
 
 	if (u.length == 1)
@@ -378,8 +359,7 @@ bignum_itoa(u)
 // u mod v
 
 function
-bignum_mod(u, v)
-{
+	bignum_mod(u, v) {
 	var a, b, i, k, nu, nv, qhat, t, w;
 
 	nu = u.length;
@@ -464,8 +444,7 @@ bignum_mod(u, v)
 	return u;
 }
 function
-bignum_mul(u, v)
-{
+	bignum_mul(u, v) {
 	var i, j, nu, nv, nw, t, w = [];
 
 	nu = u.length;
@@ -493,8 +472,7 @@ bignum_mul(u, v)
 // u ^ v
 
 function
-bignum_pow(u, v)
-{
+	bignum_pow(u, v) {
 	var w;
 
 	if (v.length == 1 && v[0] == 0)
@@ -513,7 +491,7 @@ bignum_pow(u, v)
 
 	w = bignum_int(1);
 
-	for (;;) {
+	for (; ;) {
 
 		if (v[0] % 2)
 			w = bignum_mul(w, u);
@@ -532,8 +510,7 @@ bignum_pow(u, v)
 // shift right
 
 function
-bignum_shr(u)
-{
+	bignum_shr(u) {
 	var i;
 	for (i = 0; i < u.length - 1; i++) {
 		u[i] = Math.floor(u[i] / 2);
@@ -546,8 +523,7 @@ bignum_shr(u)
 // returns null if not perfect root, otherwise returns u^(1/v)
 
 function
-bignum_root(u, v)
-{
+	bignum_root(u, v) {
 	var i, j, k, m, r, t;
 
 	if (v.length > 1)
@@ -593,13 +569,13 @@ bignum_root(u, v)
 		t = bignum_pow(r, v);
 
 		switch (bignum_cmp(t, u)) {
-		case -1:
-			break;
-		case 0:
-			return r;
-		case 1:
-			r[i] -= m; // clear bit
-			break;
+			case -1:
+				break;
+			case 0:
+				return r;
+			case 1:
+				r[i] -= m; // clear bit
+				break;
 		}
 
 		k--;
@@ -610,8 +586,7 @@ bignum_root(u, v)
 // u is greater than or equal to v
 
 function
-bignum_sub(u, v)
-{
+	bignum_sub(u, v) {
 	var i, nu, nv, nw, t, w = [];
 
 	nu = u.length;
@@ -651,8 +626,7 @@ bignum_sub(u, v)
 	return w;
 }
 function
-cmp(p1, p2)
-{
+	cmp(p1, p2) {
 	var t;
 
 	if (p1 == p2)
@@ -717,8 +691,7 @@ cmp(p1, p2)
 	return 0;
 }
 function
-cmp_numbers(p1, p2)
-{
+	cmp_numbers(p1, p2) {
 	var d1, d2;
 
 	if (isrational(p1) && isrational(p2))
@@ -740,8 +713,7 @@ cmp_numbers(p1, p2)
 }
 
 function
-cmp_rationals(p1, p2)
-{
+	cmp_rationals(p1, p2) {
 	var a, b;
 
 	if (isnegativenumber(p1) && !isnegativenumber(p2))
@@ -767,8 +739,7 @@ cmp_rationals(p1, p2)
 // this way matches strcmp (localeCompare differs from strcmp)
 
 function
-cmp_strings(s1, s2)
-{
+	cmp_strings(s1, s2) {
 	if (s1 < s2)
 		return -1;
 	if (s1 > s2)
@@ -776,8 +747,7 @@ cmp_strings(s1, s2)
 	return 0;
 }
 function
-cmp_tensors(p1, p2)
-{
+	cmp_tensors(p1, p2) {
 	var i, t;
 
 	t = p1.dim.length - p2.dim.length;
@@ -802,11 +772,10 @@ cmp_tensors(p1, p2)
 // push coefficients of polynomial P(X) on stack
 
 function
-coeffs(P, X)
-{
+	coeffs(P, X) {
 	var C;
 
-	for (;;) {
+	for (; ;) {
 
 		push(P);
 		push(X);
@@ -832,8 +801,7 @@ coeffs(P, X)
 	}
 }
 function
-compatible_dimensions(p1, p2)
-{
+	compatible_dimensions(p1, p2) {
 	var i, n;
 
 	if (!istensor(p1) && !istensor(p2))
@@ -854,12 +822,11 @@ compatible_dimensions(p1, p2)
 	return 1;
 }
 function
-cons()
-{
+	cons() {
 	var p1, p2;
 	p2 = pop();
 	p1 = pop();
-	push({car:p1, cdr:p2});
+	push({ car: p1, cdr: p2 });
 }
 const ABS = "abs";
 const ADJ = "adj";
@@ -991,8 +958,7 @@ const ARG7 = "$7";
 const ARG8 = "$8";
 const ARG9 = "$9";
 function
-copy_tensor(p1)
-{
+	copy_tensor(p1) {
 	var i, n, p2;
 
 	p2 = alloc_tensor();
@@ -1010,8 +976,7 @@ copy_tensor(p1)
 	return p2;
 }
 function
-count_denominators(p)
-{
+	count_denominators(p) {
 	var n = 0;
 	p = cdr(p);
 	while (iscons(p)) {
@@ -1022,8 +987,7 @@ count_denominators(p)
 	return n;
 }
 function
-count_numerators(p)
-{
+	count_numerators(p) {
 	var n = 0;
 	p = cdr(p);
 	while (iscons(p)) {
@@ -1036,8 +1000,7 @@ count_numerators(p)
 // push const coeffs
 
 function
-decomp()
-{
+	decomp() {
 	var p1, F, X;
 
 	X = pop();
@@ -1076,8 +1039,7 @@ decomp()
 }
 
 function
-decomp_sum(F, X)
-{
+	decomp_sum(F, X) {
 	var h, i, j, k, n;
 	var p1, p2;
 
@@ -1155,8 +1117,7 @@ decomp_sum(F, X)
 }
 
 function
-decomp_product(F, X)
-{
+	decomp_product(F, X) {
 	var h, n;
 	var p1;
 
@@ -1192,8 +1153,7 @@ decomp_product(F, X)
 	}
 }
 function
-car(p)
-{
+	car(p) {
 	if ("car" in p)
 		return p.car;
 	else
@@ -1201,8 +1161,7 @@ car(p)
 }
 
 function
-cdr(p)
-{
+	cdr(p) {
 	if ("cdr" in p)
 		return p.cdr;
 	else
@@ -1210,80 +1169,67 @@ cdr(p)
 }
 
 function
-cadr(p)
-{
+	cadr(p) {
 	return car(cdr(p));
 }
 
 function
-cddr(p)
-{
+	cddr(p) {
 	return cdr(cdr(p));
 }
 
 function
-caadr(p)
-{
+	caadr(p) {
 	return car(car(cdr(p)));
 }
 
 function
-caddr(p)
-{
+	caddr(p) {
 	return car(cdr(cdr(p)));
 }
 
 function
-cdadr(p)
-{
+	cdadr(p) {
 	return cdr(car(cdr(p)));
 }
 
 function
-cdddr(p)
-{
+	cdddr(p) {
 	return cdr(cdr(cdr(p)));
 }
 
 function
-caaddr(p)
-{
+	caaddr(p) {
 	return car(car(cdr(cdr(p))));
 }
 
 function
-cadadr(p)
-{
+	cadadr(p) {
 	return car(cdr(car(cdr(p))));
 }
 
 function
-cadddr(p)
-{
+	cadddr(p) {
 	return car(cdr(cdr(cdr(p))));
 }
 
 function
-cddadr(p)
-{
+	cddadr(p) {
 	return cdr(cdr(car(cdr(p))));
 }
 
 function
-cddddr(p)
-{
+	cddddr(p) {
 	return cdr(cdr(cdr(cdr(p))));
 }
 
 function
-cadaddr(p)
-{
+	cadaddr(p) {
 	return car(cdr(car(cdr(cdr(p)))));
 }
 
 function
-caddddr(p)
-{
+	caddddr(p) {
 	return car(cdr(cdr(cdr(cdr(p)))));
 }
 const HPAD = 10;
@@ -1324,8 +1270,7 @@ var emit_level;
 var emit_text_mode;
 
 function
-display()
-{
+	display() {
 	var d, h, p1, w, x, y;
 
 	emit_level = 0;
@@ -1357,18 +1302,15 @@ display()
 	h = "height='" + h + "'";
 	w = "width='" + w + "'";
 
-	outbuf = "<svg " + h + w + ">";
+	outbuf = ""; // Initialize outbuf for plain text output
 
-	draw_formula(x, y, p1);
+	draw_formula(HPAD, Math.round(h + VPAD), p1);
 
-	outbuf += "</svg><br>";
-
-	stdout.innerHTML += outbuf;
+	console.log(outbuf); // Print the text representation
 }
 
 function
-emit_args(p)
-{
+	emit_args(p) {
 	var t;
 
 	p = cdr(p);
@@ -1398,8 +1340,7 @@ emit_args(p)
 }
 
 function
-emit_base(p)
-{
+	emit_base(p) {
 	if (isnegativenumber(p) || isfraction(p) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER))
 		emit_subexpr(p);
 	else
@@ -1407,8 +1348,7 @@ emit_base(p)
 }
 
 function
-emit_denominators(p)
-{
+	emit_denominators(p) {
 	var n, q, s, t;
 
 	t = stack.length;
@@ -1448,8 +1388,7 @@ emit_denominators(p)
 }
 
 function
-emit_double(p)
-{
+	emit_double(p) {
 	var i, j, k, s, t;
 
 	s = fmtnum(p.d);
@@ -1519,8 +1458,7 @@ emit_double(p)
 }
 
 function
-emit_exponent(p)
-{
+	emit_exponent(p) {
 	if (isnum(p) && !isnegativenumber(p)) {
 		emit_numeric_exponent(p); // sign is not emitted
 		return;
@@ -1534,8 +1472,7 @@ emit_exponent(p)
 }
 
 function
-emit_expr(p)
-{
+	emit_expr(p) {
 	if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p)))) {
 		emit_roman_char(MINUS_SIGN);
 		emit_thin_space();
@@ -1548,8 +1485,7 @@ emit_expr(p)
 }
 
 function
-emit_expr_nib(p)
-{
+	emit_expr_nib(p) {
 	p = cdr(p);
 	emit_term(car(p));
 	p = cdr(p);
@@ -1564,8 +1500,7 @@ emit_expr_nib(p)
 }
 
 function
-emit_factor(p)
-{
+	emit_factor(p) {
 	if (isrational(p)) {
 		emit_rational(p);
 		return;
@@ -1603,16 +1538,14 @@ emit_factor(p)
 }
 
 function
-emit_fraction(p)
-{
+	emit_fraction(p) {
 	emit_numerators(p);
 	emit_denominators(p);
 	emit_update_fraction();
 }
 
 function
-emit_function(p)
-{
+	emit_function(p) {
 	// d(f(x),x)
 
 	if (car(p) == symbol(DERIVATIVE)) {
@@ -1691,8 +1624,7 @@ emit_function(p)
 }
 
 function
-emit_indices(p)
-{
+	emit_indices(p) {
 	emit_roman_string("[");
 
 	p = cdr(p);
@@ -1712,16 +1644,14 @@ emit_indices(p)
 }
 
 function
-emit_infix_operator(char_num)
-{
+	emit_infix_operator(char_num) {
 	emit_thick_space();
 	emit_roman_char(char_num);
 	emit_thick_space();
 }
 
 function
-emit_italic_char(char_num)
-{
+	emit_italic_char(char_num) {
 	var d, font_num, h, w;
 
 	if (emit_level == 0)
@@ -1747,24 +1677,21 @@ emit_italic_char(char_num)
 }
 
 function
-emit_italic_string(s)
-{
+	emit_italic_string(s) {
 	var i;
 	for (i = 0; i < s.length; i++)
 		emit_italic_char(s.charCodeAt(i));
 }
 
 function
-emit_list(p)
-{
+	emit_list(p) {
 	var t = stack.length;
 	emit_expr(p);
 	emit_update_list(t);
 }
 
 function
-emit_matrix(p, d, k)
-{
+	emit_matrix(p, d, k) {
 	var i, j, m, n, span;
 
 	if (d == p.dim.length) {
@@ -1792,8 +1719,7 @@ emit_matrix(p, d, k)
 }
 
 function
-emit_medium_space()
-{
+	emit_medium_space() {
 	var w;
 
 	if (emit_level == 0)
@@ -1810,8 +1736,7 @@ emit_medium_space()
 }
 
 function
-emit_numerators(p)
-{
+	emit_numerators(p) {
 	var n, q, s, t;
 
 	t = stack.length;
@@ -1850,8 +1775,7 @@ emit_numerators(p)
 // p is rational or double, sign is not emitted
 
 function
-emit_numeric_exponent(p)
-{
+	emit_numeric_exponent(p) {
 	var s, t;
 
 	emit_level++;
@@ -1877,8 +1801,7 @@ emit_numeric_exponent(p)
 }
 
 function
-emit_power(p)
-{
+	emit_power(p) {
 	if (cadr(p) == symbol(EXP1)) {
 		emit_roman_string("exp");
 		emit_args(cdr(p));
@@ -1906,8 +1829,7 @@ emit_power(p)
 }
 
 function
-emit_rational(p)
-{
+	emit_rational(p) {
 	var s, t;
 
 	if (isinteger(p)) {
@@ -1936,8 +1858,7 @@ emit_rational(p)
 // p = y^x where x is a negative number
 
 function
-emit_reciprocal(p)
-{
+	emit_reciprocal(p) {
 	var t;
 
 	emit_roman_string("1"); // numerator
@@ -1957,8 +1878,7 @@ emit_reciprocal(p)
 }
 
 function
-emit_roman_char(char_num)
-{
+	emit_roman_char(char_num) {
 	var d, font_num, h, w;
 
 	if (emit_level == 0)
@@ -1984,29 +1904,25 @@ emit_roman_char(char_num)
 }
 
 function
-emit_roman_string(s)
-{
+	emit_roman_string(s) {
 	var i;
 	for (i = 0; i < s.length; i++)
 		emit_roman_char(s.charCodeAt(i));
 }
 
 function
-emit_string(p)
-{
+	emit_string(p) {
 	emit_roman_string(p.string);
 }
 
 function
-emit_subexpr(p)
-{
+	emit_subexpr(p) {
 	emit_list(p);
 	emit_update_subexpr();
 }
 
 function
-emit_symbol(p)
-{
+	emit_symbol(p) {
 	var k, s, t;
 
 	if (p == symbol(EXP1)) {
@@ -2098,18 +2014,17 @@ const symbol_name_tab = [
 ];
 
 const symbol_italic_tab = [
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
 	0,
 ];
 
 function
-emit_symbol_fragment(s, k)
-{
+	emit_symbol_fragment(s, k) {
 	var char_num, i, n, t;
 
 	n = symbol_name_tab.length;
@@ -2139,8 +2054,7 @@ emit_symbol_fragment(s, k)
 }
 
 function
-emit_tensor(p)
-{
+	emit_tensor(p) {
 	if (p.dim.length % 2 == 1)
 		emit_vector(p); // odd rank
 	else
@@ -2148,8 +2062,7 @@ emit_tensor(p)
 }
 
 function
-emit_term(p)
-{
+	emit_term(p) {
 	if (car(p) == symbol(MULTIPLY))
 		emit_term_nib(p);
 	else
@@ -2157,8 +2070,7 @@ emit_term(p)
 }
 
 function
-emit_term_nib(p)
-{
+	emit_term_nib(p) {
 	if (find_denominator(p)) {
 		emit_fraction(p);
 		return;
@@ -2183,8 +2095,7 @@ emit_term_nib(p)
 }
 
 function
-emit_thick_space()
-{
+	emit_thick_space() {
 	var w;
 
 	if (emit_level == 0)
@@ -2201,8 +2112,7 @@ emit_thick_space()
 }
 
 function
-emit_thin_space()
-{
+	emit_thin_space() {
 	var w;
 
 	if (emit_level == 0)
@@ -2219,8 +2129,7 @@ emit_thin_space()
 }
 
 function
-emit_update_fraction()
-{
+	emit_update_fraction() {
 	var d, font_num, h, m, opcode, p1, p2, v, w;
 
 	p2 = pop(); // denominator
@@ -2258,8 +2167,7 @@ emit_update_fraction()
 }
 
 function
-emit_update_list(t)
-{
+	emit_update_list(t) {
 	var d, h, i, p1, w;
 
 	if (stack.length - t == 1)
@@ -2289,8 +2197,7 @@ emit_update_list(t)
 }
 
 function
-emit_update_subexpr()
-{
+	emit_update_subexpr() {
 	var d, font_num, h, m, opcode, p1, w;
 
 	p1 = pop();
@@ -2330,8 +2237,7 @@ emit_update_subexpr()
 }
 
 function
-emit_update_subscript()
-{
+	emit_update_subscript() {
 	var d, dx, dy, font_num, h, p1, t, w;
 
 	p1 = pop();
@@ -2364,8 +2270,7 @@ emit_update_subscript()
 }
 
 function
-emit_update_superscript()
-{
+	emit_update_superscript() {
 	var d, dx, dy, font_num, h, p1, p2, t, w, y;
 
 	p2 = pop(); // exponent
@@ -2417,8 +2322,7 @@ emit_update_superscript()
 }
 
 function
-emit_update_table(n, m)
-{
+	emit_update_table(n, m) {
 	var d, h, i, j, p1, p2, p3, p4, t, total_height, total_width, w;
 
 	total_height = 0;
@@ -2500,8 +2404,7 @@ emit_update_table(n, m)
 }
 
 function
-emit_vector(p)
-{
+	emit_vector(p) {
 	var i, n, span;
 
 	// compute element span
@@ -2522,43 +2425,36 @@ emit_vector(p)
 }
 
 function
-opcode(p)
-{
+	opcode(p) {
 	return car(p).d;
 }
 
 function
-height(p)
-{
+	height(p) {
 	return cadr(p).d;
 }
 
 function
-depth(p)
-{
+	depth(p) {
 	return caddr(p).d;
 }
 
 function
-width(p)
-{
+	width(p) {
 	return cadddr(p).d;
 }
 
 function
-val1(p)
-{
+	val1(p) {
 	return car(p).d;
 }
 
 function
-val2(p)
-{
+	val2(p) {
 	return cadr(p).d;
 }
 function
-draw_formula(x, y, p)
-{
+	draw_formula(x, y, p) {
 	var char_num, d, dx, dy, font_num, h, k, w;
 
 	k = opcode(p);
@@ -2570,57 +2466,53 @@ draw_formula(x, y, p)
 
 	switch (k) {
 
-	case EMIT_SPACE:
-		break;
+		case EMIT_SPACE:
+			outbuf += " "
+			break;
 
-	case EMIT_CHAR:
-		font_num = val1(p);
-		char_num = val2(p);
-		draw_char(x, y, font_num, char_num);
-		break;
+		case EMIT_CHAR:
+			// font_num = val1(p);
+			// char_num = val2(p);
+			// draw_char(x, y, font_num, char_num);
+			outbuf += String.fromCharCode(val2(p));
+			break;
 
-	case EMIT_LIST:
-		p = car(p);
-		while (iscons(p)) {
+		case EMIT_LIST:
+			p = car(p);
+			while (iscons(p)) {
+				draw_formula(x, y, car(p));
+				p = cdr(p);
+			}
+			break;
+
+		case EMIT_SUPERSCRIPT:
 			draw_formula(x, y, car(p));
-			x += width(car(p));
-			p = cdr(p);
-		}
-		break;
+			outbuf += "^";
+			draw_formula(x, y, cadr(p));
+			break;
+		case EMIT_SUBSCRIPT:
+			draw_formula(x, y, car(p));
+			outbuf += "_";
+			draw_formula(x, y, cadr(p));
+			break;
 
-	case EMIT_SUPERSCRIPT:
-	case EMIT_SUBSCRIPT:
-		dx = val1(p);
-		dy = val2(p);
-		p = caddr(p);
-		draw_formula(x + dx, y + dy, p);
-		break;
+		case EMIT_SUBEXPR:
+		case EMIT_SMALL_SUBEXPR:
+			outbuf += "(";
+			draw_formula(x, y, car(p));
+			outbuf += ")";
+			break;
 
-	case EMIT_SUBEXPR:
-		draw_delims(x, y, h, d, w, FONT_SIZE * DELIM_STROKE, ROMAN_FONT);
-		dx = get_char_width(ROMAN_FONT, LEFT_PAREN);
-		draw_formula(x + dx, y, car(p));
-		break;
+		case EMIT_FRACTION:
+		case EMIT_SMALL_FRACTION:
+			draw_formula(x, y, car(p)); // Numerator
+			outbuf += "/";
+			draw_formula(x, y, cadr(p)); // Denominator
+			break;
 
-	case EMIT_SMALL_SUBEXPR:
-		draw_delims(x, y, h, d, w, SMALL_FONT_SIZE * DELIM_STROKE, SMALL_ROMAN_FONT);
-		dx = get_char_width(SMALL_ROMAN_FONT, LEFT_PAREN);
-		draw_formula(x + dx, y, car(p));
-		break;
-
-	case EMIT_FRACTION:
-		draw_fraction(x, y, h, d, w, FONT_SIZE * FRAC_STROKE, ROMAN_FONT, p);
-		break;
-
-	case EMIT_SMALL_FRACTION:
-		draw_fraction(x, y, h, d, w, SMALL_FONT_SIZE * FRAC_STROKE, SMALL_ROMAN_FONT, p);
-		break;
-
-	case EMIT_TABLE:
-		draw_delims(x, y, h, d, w, 1.2 * FONT_SIZE * DELIM_STROKE, ROMAN_FONT);
-		dx = get_char_width(ROMAN_FONT, LEFT_PAREN);
-		draw_table(x + dx, y - h, p);
-		break;
+		case EMIT_TABLE:
+			draw_table(x, y, p);
+			break;
 	}
 }
 
@@ -2686,8 +2578,7 @@ const html_name_tab = [
 ];
 
 function
-draw_char(x, y, font_num, char_num)
-{
+	draw_char(x, y, font_num, char_num) {
 	var s, t;
 
 	if (char_num < 32 || char_num > 181)
@@ -2708,18 +2599,18 @@ draw_char(x, y, font_num, char_num)
 	t = "<text style='font-family:\"Times New Roman\";";
 
 	switch (font_num) {
-	case ROMAN_FONT:
-		t += "font-size:" + FONT_SIZE + "px;";
-		break;
-	case ITALIC_FONT:
-		t += "font-size:" + FONT_SIZE + "px;font-style:italic;";
-		break;
-	case SMALL_ROMAN_FONT:
-		t += "font-size:" + SMALL_FONT_SIZE + "px;";
-		break;
-	case SMALL_ITALIC_FONT:
-		t += "font-size:" + SMALL_FONT_SIZE + "px;font-style:italic;";
-		break;
+		case ROMAN_FONT:
+			t += "font-size:" + FONT_SIZE + "px;";
+			break;
+		case ITALIC_FONT:
+			t += "font-size:" + FONT_SIZE + "px;font-style:italic;";
+			break;
+		case SMALL_ROMAN_FONT:
+			t += "font-size:" + SMALL_FONT_SIZE + "px;";
+			break;
+		case SMALL_ITALIC_FONT:
+			t += "font-size:" + SMALL_FONT_SIZE + "px;font-style:italic;";
+			break;
 	}
 
 	x = "x='" + x + "'";
@@ -2731,8 +2622,7 @@ draw_char(x, y, font_num, char_num)
 }
 
 function
-draw_delims(x, y, h, d, w, stroke_width, font_num)
-{
+	draw_delims(x, y, h, d, w, stroke_width, font_num) {
 	var cd, ch, cw;
 
 	ch = get_cap_height(font_num);
@@ -2749,8 +2639,7 @@ draw_delims(x, y, h, d, w, stroke_width, font_num)
 }
 
 function
-draw_left_delim(x, y, h, d, w, stroke_width)
-{
+	draw_left_delim(x, y, h, d, w, stroke_width) {
 	var x1, x2, y1, y2;
 
 	x1 = Math.round(x + 0.5 * w);
@@ -2765,8 +2654,7 @@ draw_left_delim(x, y, h, d, w, stroke_width)
 }
 
 function
-draw_right_delim(x, y, h, d, w, stroke_width)
-{
+	draw_right_delim(x, y, h, d, w, stroke_width) {
 	var x1, x2, y1, y2;
 
 	x1 = Math.round(x + 0.5 * w);
@@ -2781,8 +2669,7 @@ draw_right_delim(x, y, h, d, w, stroke_width)
 }
 
 function
-draw_stroke(x1, y1, x2, y2, stroke_width)
-{
+	draw_stroke(x1, y1, x2, y2, stroke_width) {
 	var s;
 
 	x1 = "x1='" + x1 + "'";
@@ -2797,8 +2684,7 @@ draw_stroke(x1, y1, x2, y2, stroke_width)
 }
 
 function
-draw_fraction(x, y, h, d, w, stroke_width, font_num, p)
-{
+	draw_fraction(x, y, h, d, w, stroke_width, font_num, p) {
 	var dx, dy;
 
 	// horizontal line
@@ -2821,52 +2707,28 @@ draw_fraction(x, y, h, d, w, stroke_width, font_num, p)
 	draw_formula(x + dx, y + dy, car(p));
 }
 
-function
-draw_table(x, y, p)
-{
-	var cx, d, dx, h, i, j, m, n, w;
-	var column_width, elem_width, row_depth, row_height, table;
+function draw_table(x, y, p) {
+	var i, j, m, n, table;
 
-	n = val1(p);
-	m = val2(p);
+	n = val1(p); // Number of rows
+	m = val2(p); // Number of columns
 
 	p = cddr(p);
-
 	table = car(p);
-	h = cadr(p);
-	d = caddr(p);
 
-	for (i = 0; i < n; i++) { // for each row
-
-		row_height = val1(h);
-		row_depth = val1(d);
-
-		y += TABLE_VSPACE + row_height;
-
-		dx = 0;
-
-		w = cadddr(p);
-
-		for (j = 0; j < m; j++) { // for each column
-
-			column_width = val1(w);
-			elem_width = width(car(table));
-			cx = x + dx + TABLE_HSPACE + (column_width - elem_width) / 2; // center horizontal
-			draw_formula(cx, y, car(table));
-			dx += column_width + 2 * TABLE_HSPACE;
+	for (i = 0; i < n; i++) { // For each row
+		for (j = 0; j < m; j++) { // For each column
+			draw_formula(x, y, car(table)); // Output the element
+			if (j < m - 1) {
+				outbuf += " "; // Add space between elements
+			}
 			table = cdr(table);
-			w = cdr(w);
 		}
-
-		y += row_depth + TABLE_VSPACE;
-
-		h = cdr(h);
-		d = cdr(d);
+		outbuf += "\n"; // Newline after each row
 	}
 }
 function
-draw_line(x1, y1, x2, y2, t)
-{
+	draw_line(x1, y1, x2, y2, t) {
 	x1 += DRAW_LEFT_PAD;
 	x2 += DRAW_LEFT_PAD;
 
@@ -2882,8 +2744,7 @@ draw_line(x1, y1, x2, y2, t)
 	outbuf += "<line " + x1 + y1 + x2 + y2 + "style='stroke:black;stroke-width:" + t + "'/>\n";
 }
 function
-draw_pass1(F, T)
-{
+	draw_pass1(F, T) {
 	var i, t;
 	for (i = 0; i <= DRAW_WIDTH; i++) {
 		t = tmin + (tmax - tmin) * i / DRAW_WIDTH;
@@ -2891,8 +2752,7 @@ draw_pass1(F, T)
 	}
 }
 function
-draw_pass2(F, T)
-{
+	draw_pass2(F, T) {
 	var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
 	n = draw_array.length - 1;
@@ -2948,16 +2808,14 @@ var ymax;
 
 var draw_array;
 function
-dupl()
-{
+	dupl() {
 	var p1;
 	p1 = pop();
 	push(p1);
 	push(p1);
 }
 function
-emit_axes()
-{
+	emit_axes() {
 	var dx, dy, x, y;
 
 	x = 0;
@@ -2973,8 +2831,7 @@ emit_axes()
 		draw_line(0, dy, DRAW_WIDTH, dy, 0.5); // horizontal axis
 }
 function
-emit_box()
-{
+	emit_box() {
 	var x1 = 0;
 	var x2 = DRAW_WIDTH;
 
@@ -2988,8 +2845,7 @@ emit_box()
 	draw_line(x2, y1, x2, y2, 0.5); // right line
 }
 function
-emit_graph()
-{
+	emit_graph() {
 	var h, w;
 
 	h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
@@ -3007,11 +2863,10 @@ emit_graph()
 
 	outbuf += "</svg><br>";
 
-	stdout.innerHTML += outbuf;
+	console.log(outbuf);
 }
 function
-emit_labels()
-{
+	emit_labels() {
 	var p, x, y;
 
 	push_double(ymax);
@@ -3051,8 +2906,7 @@ emit_labels()
 	draw_formula(x, y, p);
 }
 function
-emit_points()
-{
+	emit_points() {
 	var i, n, x, y;
 
 	n = draw_array.length;
@@ -3075,21 +2929,18 @@ emit_points()
 	}
 }
 function
-equal(p1, p2)
-{
+	equal(p1, p2) {
 	return cmp(p1, p2) == 0;
 }
 function
-eval_abs(p1)
-{
+	eval_abs(p1) {
 	push(cadr(p1));
 	evalf();
 	absfunc();
 }
 
 function
-absfunc()
-{
+	absfunc() {
 	var h, p1, p2, p3;
 
 	p1 = pop();
@@ -3170,8 +3021,7 @@ absfunc()
 	list(2);
 }
 function
-eval_add(p1)
-{
+	eval_add(p1) {
 	var h = stack.length;
 	expanding--; // undo expanding++ in evalf
 	p1 = cdr(p1);
@@ -3185,14 +3035,12 @@ eval_add(p1)
 }
 
 function
-add()
-{
+	add() {
 	add_terms(2);
 }
 
 function
-add_terms(n)
-{
+	add_terms(n) {
 	var h, i, p, T;
 
 	if (n < 2)
@@ -3242,8 +3090,7 @@ add_terms(n)
 }
 
 function
-flatten_terms(h)
-{
+	flatten_terms(h) {
 	var i, n, p1;
 	n = stack.length;
 	for (i = h; i < n; i++) {
@@ -3260,8 +3107,7 @@ flatten_terms(h)
 }
 
 function
-combine_tensors(h)
-{
+	combine_tensors(h) {
 	var i, p1, T;
 	T = symbol(NIL);
 	for (i = h; i < stack.length; i++) {
@@ -3282,8 +3128,7 @@ combine_tensors(h)
 }
 
 function
-add_tensors()
-{
+	add_tensors() {
 	var i, n, p1, p2;
 
 	p2 = pop();
@@ -3307,8 +3152,7 @@ add_tensors()
 }
 
 function
-combine_terms(h)
-{
+	combine_terms(h) {
 	var i;
 	sort_terms(h);
 	for (i = h; i < stack.length; i++) {
@@ -3323,8 +3167,7 @@ combine_terms(h)
 }
 
 function
-combine_terms_nib(i)
-{
+	combine_terms_nib(i) {
 	var coeff1, coeff2, denorm, p1, p2;
 
 	p1 = stack[i];
@@ -3407,15 +3250,13 @@ combine_terms_nib(i)
 }
 
 function
-sort_terms(h)
-{
+	sort_terms(h) {
 	var t = stack.splice(h).sort(cmp_terms);
 	stack = stack.concat(t);
 }
 
 function
-cmp_terms(p1, p2)
-{
+	cmp_terms(p1, p2) {
 	var a, b, c;
 
 	// 1st level: imaginary terms on the right
@@ -3508,8 +3349,7 @@ cmp_terms(p1, p2)
 // for example, sqrt(1/2) + sqrt(1/2) -> 2 sqrt(1/2) -> sqrt(2)
 
 function
-normalize_terms(h)
-{
+	normalize_terms(h) {
 	var i, n, p;
 	n = 0;
 	for (i = h; i < stack.length; i++) {
@@ -3526,8 +3366,7 @@ normalize_terms(h)
 }
 
 function
-add_numbers(p1, p2)
-{
+	add_numbers(p1, p2) {
 	var a, b;
 
 	if (isrational(p1) && isrational(p2)) {
@@ -3545,8 +3384,7 @@ add_numbers(p1, p2)
 }
 
 function
-add_rationals(p1, p2)
-{
+	add_rationals(p1, p2) {
 	var a, ab, b, ba, d, sign;
 
 	if (iszero(p1)) {
@@ -3572,17 +3410,17 @@ add_rationals(p1, p2)
 		sign = p1.sign;
 	} else {
 		switch (bignum_cmp(ab, ba)) {
-		case 1:
-			a = bignum_sub(ab, ba);
-			sign = p1.sign;
-			break;
-		case 0:
-			push_integer(0);
-			return;
-		case -1:
-			a = bignum_sub(ba, ab);
-			sign = p2.sign;
-			break;
+			case 1:
+				a = bignum_sub(ab, ba);
+				sign = p1.sign;
+				break;
+			case 0:
+				push_integer(0);
+				return;
+			case -1:
+				a = bignum_sub(ba, ab);
+				sign = p2.sign;
+				break;
 		}
 	}
 
@@ -3597,49 +3435,45 @@ add_rationals(p1, p2)
 }
 
 function
-add_integers(p1, p2)
-{
+	add_integers(p1, p2) {
 	var c, sign;
 	if (p1.sign == p2.sign) {
 		c = bignum_add(p1.a, p2.a);
 		sign = p1.sign;
 	} else {
 		switch (bignum_cmp(p1.a, p2.a)) {
-		case 1:
-			c = bignum_sub(p1.a, p2.a);
-			sign = p1.sign;
-			break;
-		case 0:
-			push_integer(0);
-			return;
-		case -1:
-			c = bignum_sub(p2.a, p1.a);
-			sign = p2.sign;
-			break;
-		default:
-			stopf("error");
+			case 1:
+				c = bignum_sub(p1.a, p2.a);
+				sign = p1.sign;
+				break;
+			case 0:
+				push_integer(0);
+				return;
+			case -1:
+				c = bignum_sub(p2.a, p1.a);
+				sign = p2.sign;
+				break;
+			default:
+				stopf("error");
 		}
 	}
 	push_bignum(sign, c, bignum_int(1));
 }
 
 function
-subtract()
-{
+	subtract() {
 	negate();
 	add();
 }
 function
-eval_adj(p1)
-{
+	eval_adj(p1) {
 	push(cadr(p1));
 	evalf();
 	adj();
 }
 
 function
-adj()
-{
+	adj() {
 	var col, i, j, k, n, row, p1, p2, p3;
 
 	p1 = pop();
@@ -3693,8 +3527,7 @@ adj()
 	push(p2);
 }
 function
-eval_and(p1)
-{
+	eval_and(p1) {
 	var p2;
 	p1 = cdr(p1);
 	while (iscons(p1)) {
@@ -3710,8 +3543,7 @@ eval_and(p1)
 	push_integer(1);
 }
 function
-eval_and_print_result()
-{
+	eval_and_print_result() {
 	var p1, p2;
 
 	p1 = pop();
@@ -3727,16 +3559,14 @@ eval_and_print_result()
 		set_symbol(symbol(LAST), p2, symbol(NIL));
 }
 function
-eval_arccos(p1)
-{
+	eval_arccos(p1) {
 	push(cadr(p1));
 	evalf();
 	arccos();
 }
 
 function
-arccos()
-{
+	arccos() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -3812,7 +3642,7 @@ arccos()
 
 	// arccos(1/2) = 1/3 pi
 
-	if (isequalq(p1, 1 ,2)) {
+	if (isequalq(p1, 1, 2)) {
 		push_rational(1, 3);
 		push_symbol(PI);
 		multiply();
@@ -3847,16 +3677,14 @@ arccos()
 	list(2);
 }
 function
-eval_arccosh(p1)
-{
+	eval_arccosh(p1) {
 	push(cadr(p1));
 	evalf();
 	arccosh();
 }
 
 function
-arccosh()
-{
+	arccosh() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -3913,16 +3741,14 @@ arccosh()
 	list(2);
 }
 function
-eval_arcsin(p1)
-{
+	eval_arcsin(p1) {
 	push(cadr(p1));
 	evalf();
 	arcsin();
 }
 
 function
-arcsin()
-{
+	arcsin() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -4018,16 +3844,14 @@ arcsin()
 	list(2);
 }
 function
-eval_arcsinh(p1)
-{
+	eval_arcsinh(p1) {
 	push(cadr(p1));
 	evalf();
 	arcsinh();
 }
 
 function
-arcsinh()
-{
+	arcsinh() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -4092,8 +3916,7 @@ arcsinh()
 	list(2);
 }
 function
-eval_arctan(p1)
-{
+	eval_arctan(p1) {
 	push(cadr(p1));
 	evalf();
 
@@ -4109,8 +3932,7 @@ eval_arctan(p1)
 }
 
 function
-arctan()
-{
+	arctan() {
 	var i, n, X, Y, Z;
 
 	X = pop();
@@ -4179,8 +4001,7 @@ arctan()
 }
 
 function
-arctan_numbers(X, Y)
-{
+	arctan_numbers(X, Y) {
 	var x, y, T;
 
 	if (iszero(X) && iszero(Y)) {
@@ -4282,16 +4103,14 @@ arctan_numbers(X, Y)
 	multiply();
 }
 function
-eval_arctanh(p1)
-{
+	eval_arctanh(p1) {
 	push(cadr(p1));
 	evalf();
 	arctanh();
 }
 
 function
-arctanh()
-{
+	arctanh() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -4367,8 +4186,7 @@ arctanh()
 	list(2);
 }
 function
-eval_arg(p1)
-{
+	eval_arg(p1) {
 	push(cadr(p1));
 	evalf();
 	polar(); // normalize
@@ -4378,8 +4196,7 @@ eval_arg(p1)
 // may return a denormalized angle
 
 function
-argfunc()
-{
+	argfunc() {
 	var i, n, p1, p2, num, den;
 
 	p1 = pop();
@@ -4422,8 +4239,7 @@ argfunc()
 // arg(-i) == arg(-1) + arg(i) == -pi + 1/2 pi == -1/2 pi
 
 function
-arg_nib()
-{
+	arg_nib() {
 	var h, p1, x, y;
 
 	p1 = pop();
@@ -4500,21 +4316,18 @@ arg_nib()
 	push_integer(0); // p1 is real
 }
 function
-eval_binding(p1)
-{
+	eval_binding(p1) {
 	push(get_binding(cadr(p1)));
 }
 function
-eval_ceiling(p1)
-{
+	eval_ceiling(p1) {
 	push(cadr(p1));
 	evalf();
 	ceilingfunc();
 }
 
 function
-ceilingfunc()
-{
+	ceilingfunc() {
 	var a, b, d, i, n, p1;
 
 	p1 = pop();
@@ -4562,8 +4375,7 @@ ceilingfunc()
 	list(2);
 }
 function
-eval_check(p1)
-{
+	eval_check(p1) {
 	push(cadr(p1));
 	evalp();
 	p1 = pop();
@@ -4572,16 +4384,14 @@ eval_check(p1)
 	push_symbol(NIL); // no result is printed
 }
 function
-eval_circexp(p1)
-{
+	eval_circexp(p1) {
 	push(cadr(p1));
 	evalf();
 	circexp();
 }
 
 function
-circexp()
-{
+	circexp() {
 	var i, n, p1, num, den;
 
 	p1 = pop();
@@ -4619,8 +4429,7 @@ circexp()
 }
 
 function
-circexp_subst()
-{
+	circexp_subst() {
 	var h, p1;
 
 	p1 = pop();
@@ -4689,8 +4498,7 @@ circexp_subst()
 	list(stack.length - h);
 }
 function
-eval_clear()
-{
+	eval_clear() {
 	save_symbol(symbol(TRACE));
 	save_symbol(symbol(TTY));
 
@@ -4705,16 +4513,14 @@ eval_clear()
 	push_symbol(NIL); // result
 }
 function
-eval_clock(p1)
-{
+	eval_clock(p1) {
 	push(cadr(p1));
 	evalf();
 	clockfunc();
 }
 
 function
-clockfunc()
-{
+	clockfunc() {
 	var i, n, p1;
 
 	p1 = pop();
@@ -4746,8 +4552,7 @@ clockfunc()
 	multiply();
 }
 function
-eval_cofactor(p1)
-{
+	eval_cofactor(p1) {
 	var i, j, p2;
 
 	push(cadr(p1));
@@ -4778,23 +4583,20 @@ eval_cofactor(p1)
 		negate();
 }
 function
-eval_conj(p1)
-{
+	eval_conj(p1) {
 	push(cadr(p1));
 	evalf();
 	conjfunc();
 }
 
 function
-conjfunc()
-{
+	conjfunc() {
 	conjfunc_subst();
 	evalf();
 }
 
 function
-conjfunc_subst()
-{
+	conjfunc_subst() {
 	var h, i, n, p1;
 
 	p1 = pop();
@@ -4838,8 +4640,7 @@ conjfunc_subst()
 	push(p1);
 }
 function
-eval_contract(p1)
-{
+	eval_contract(p1) {
 	push(cadr(p1));
 	evalf();
 
@@ -4863,8 +4664,7 @@ eval_contract(p1)
 }
 
 function
-contract()
-{
+	contract() {
 	var h, i, j, k, m, n, ncol, ndim, nelem, nrow, p1, p2, p3;
 	var index = [];
 
@@ -4948,16 +4748,14 @@ contract()
 	push(p2);
 }
 function
-eval_cos(p1)
-{
+	eval_cos(p1) {
 	push(cadr(p1));
 	evalf();
 	cosfunc();
 }
 
 function
-cosfunc()
-{
+	cosfunc() {
 	var d, i, n, p1, p2, X, Y;
 
 	p1 = pop();
@@ -5086,69 +4884,68 @@ cosfunc()
 	n = pop_integer();
 
 	switch (n) {
-	case 90:
-	case 270:
-		push_integer(0);
-		break;
-	case 60:
-	case 300:
-		push_rational(1, 2);
-		break;
-	case 120:
-	case 240:
-		push_rational(-1, 2);
-		break;
-	case 45:
-	case 315:
-		push_rational(1, 2);
-		push_integer(2);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 135:
-	case 225:
-		push_rational(-1, 2);
-		push_integer(2);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 30:
-	case 330:
-		push_rational(1, 2);
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 150:
-	case 210:
-		push_rational(-1, 2);
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 0:
-		push_integer(1);
-		break;
-	case 180:
-		push_integer(-1);
-		break;
-	default:
-		push_symbol(COS);
-		push(p1);
-		list(2);
-		break;
+		case 90:
+		case 270:
+			push_integer(0);
+			break;
+		case 60:
+		case 300:
+			push_rational(1, 2);
+			break;
+		case 120:
+		case 240:
+			push_rational(-1, 2);
+			break;
+		case 45:
+		case 315:
+			push_rational(1, 2);
+			push_integer(2);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 135:
+		case 225:
+			push_rational(-1, 2);
+			push_integer(2);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 30:
+		case 330:
+			push_rational(1, 2);
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 150:
+		case 210:
+			push_rational(-1, 2);
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 0:
+			push_integer(1);
+			break;
+		case 180:
+			push_integer(-1);
+			break;
+		default:
+			push_symbol(COS);
+			push(p1);
+			list(2);
+			break;
 	}
 }
 
 // cos(x + n/2 pi) = cos(x) cos(n/2 pi) - sin(x) sin(n/2 pi)
 
 function
-cosfunc_sum(p1)
-{
+	cosfunc_sum(p1) {
 	var p2, p3;
 	p2 = cdr(p1);
 	while (iscons(p2)) {
@@ -5183,16 +4980,14 @@ cosfunc_sum(p1)
 	list(2);
 }
 function
-eval_cosh(p1)
-{
+	eval_cosh(p1) {
 	push(cadr(p1));
 	evalf();
 	coshfunc();
 }
 
 function
-coshfunc()
-{
+	coshfunc() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -5255,8 +5050,7 @@ coshfunc()
 	list(2);
 }
 function
-eval_defint(p1)
-{
+	eval_defint(p1) {
 	var A, B, F, X;
 
 	push(cadr(p1));
@@ -5305,22 +5099,19 @@ eval_defint(p1)
 	push(F);
 }
 function
-eval_denominator(p1)
-{
+	eval_denominator(p1) {
 	push(cadr(p1));
 	evalf();
 	denominator();
 }
 
 function
-denominator()
-{
+	denominator() {
 	numden();
 	pop(); // discard numerator
 }
 function
-eval_derivative(p1)
-{
+	eval_derivative(p1) {
 	var flag, i, n, X, Y;
 
 	push(cadr(p1));
@@ -5385,8 +5176,7 @@ eval_derivative(p1)
 }
 
 function
-derivative()
-{
+	derivative() {
 	var F, X;
 
 	X = pop();
@@ -5406,8 +5196,7 @@ derivative()
 }
 
 function
-d_scalar_scalar(F, X)
-{
+	d_scalar_scalar(F, X) {
 	if (!isusersymbol(X))
 		stopf("derivative: symbol expected");
 
@@ -5529,8 +5318,7 @@ d_scalar_scalar(F, X)
 }
 
 function
-dsum(p1, p2)
-{
+	dsum(p1, p2) {
 	var h = stack.length;
 	p1 = cdr(p1);
 	while (iscons(p1)) {
@@ -5543,8 +5331,7 @@ dsum(p1, p2)
 }
 
 function
-dproduct(p1, p2)
-{
+	dproduct(p1, p2) {
 	var i, j, n, p3;
 	n = lengthf(p1) - 1;
 	for (i = 0; i < n; i++) {
@@ -5576,8 +5363,7 @@ dproduct(p1, p2)
 //	dx       u dx           dx
 
 function
-dpower(F, X)
-{
+	dpower(F, X) {
 	if (isnum(cadr(F)) && isnum(caddr(F))) {
 		push_integer(0); // irr or imag
 		return;
@@ -5610,8 +5396,7 @@ dpower(F, X)
 }
 
 function
-dlog(p1, p2)
-{
+	dlog(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5632,8 +5417,7 @@ dlog(p1, p2)
 //	caddr(p1) = y
 
 function
-dd(p1, p2)
-{
+	dd(p1, p2) {
 	var p3;
 
 	// d(f(x,y),x)
@@ -5674,8 +5458,7 @@ dd(p1, p2)
 // derivative of a generic function
 
 function
-dfunction(p1, p2)
-{
+	dfunction(p1, p2) {
 	var p3;
 
 	p3 = cdr(p1); // p3 is the argument list for the function
@@ -5690,8 +5473,7 @@ dfunction(p1, p2)
 }
 
 function
-dsin(p1, p2)
-{
+	dsin(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5701,8 +5483,7 @@ dsin(p1, p2)
 }
 
 function
-dcos(p1, p2)
-{
+	dcos(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5713,8 +5494,7 @@ dcos(p1, p2)
 }
 
 function
-dtan(p1, p2)
-{
+	dtan(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5726,8 +5506,7 @@ dtan(p1, p2)
 }
 
 function
-darcsin(p1, p2)
-{
+	darcsin(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5742,8 +5521,7 @@ darcsin(p1, p2)
 }
 
 function
-darccos(p1, p2)
-{
+	darccos(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5759,8 +5537,7 @@ darccos(p1, p2)
 }
 
 function
-darctan(p1, p2)
-{
+	darctan(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5774,8 +5551,7 @@ darctan(p1, p2)
 }
 
 function
-dsinh(p1, p2)
-{
+	dsinh(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5785,8 +5561,7 @@ dsinh(p1, p2)
 }
 
 function
-dcosh(p1, p2)
-{
+	dcosh(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5796,8 +5571,7 @@ dcosh(p1, p2)
 }
 
 function
-dtanh(p1, p2)
-{
+	dtanh(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5809,8 +5583,7 @@ dtanh(p1, p2)
 }
 
 function
-darcsinh(p1, p2)
-{
+	darcsinh(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5825,8 +5598,7 @@ darcsinh(p1, p2)
 }
 
 function
-darccosh(p1, p2)
-{
+	darccosh(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5841,8 +5613,7 @@ darccosh(p1, p2)
 }
 
 function
-darctanh(p1, p2)
-{
+	darctanh(p1, p2) {
 	push(cadr(p1));
 	push(p2);
 	derivative();
@@ -5856,8 +5627,7 @@ darctanh(p1, p2)
 }
 
 function
-derf(p1, p2)
-{
+	derf(p1, p2) {
 	push(cadr(p1));
 	push_integer(2);
 	power();
@@ -5878,8 +5648,7 @@ derf(p1, p2)
 
 
 function
-derfc(p1, p2)
-{
+	derfc(p1, p2) {
 	push(cadr(p1));
 	push_integer(2);
 	power();
@@ -5887,7 +5656,7 @@ derfc(p1, p2)
 	multiply();
 	expfunc();
 	push_symbol(PI);
-	push_rational(-1,2);
+	push_rational(-1, 2);
 	power();
 	multiply();
 	push_integer(-2);
@@ -5901,8 +5670,7 @@ derfc(p1, p2)
 // gradient of tensor p1 wrt tensor p2
 
 function
-d_tensor_tensor(p1, p2)
-{
+	d_tensor_tensor(p1, p2) {
 	var i, j, k, m, n, p3;
 
 	n = p1.elem.length;
@@ -5939,8 +5707,7 @@ d_tensor_tensor(p1, p2)
 // gradient of scalar p1 wrt tensor p2
 
 function
-d_scalar_tensor(p1, p2)
-{
+	d_scalar_tensor(p1, p2) {
 	var i, n, p3;
 
 	p3 = copy_tensor(p2);
@@ -5960,8 +5727,7 @@ d_scalar_tensor(p1, p2)
 // derivative of tensor p1 wrt scalar p2
 
 function
-d_tensor_scalar(p1, p2)
-{
+	d_tensor_scalar(p1, p2) {
 	var i, n, p3;
 
 	p3 = copy_tensor(p1);
@@ -5978,16 +5744,14 @@ d_tensor_scalar(p1, p2)
 	push(p3);
 }
 function
-eval_det(p1)
-{
+	eval_det(p1) {
 	push(cadr(p1));
 	evalf();
 	det();
 }
 
 function
-det()
-{
+	det() {
 	var h, i, j, k, m, n, p1, p2;
 
 	p1 = pop();
@@ -6003,50 +5767,50 @@ det()
 	n = p1.dim[0];
 
 	switch (n) {
-	case 1:
-		push(p1.elem[0]);
-		return;
-	case 2:
-		push(p1.elem[0]);
-		push(p1.elem[3]);
-		multiply();
-		push(p1.elem[1]);
-		push(p1.elem[2]);
-		multiply();
-		subtract();
-		return;
-	case 3:
-		push(p1.elem[0]);
-		push(p1.elem[4]);
-		push(p1.elem[8]);
-		multiply_factors(3);
-		push(p1.elem[1]);
-		push(p1.elem[5]);
-		push(p1.elem[6]);
-		multiply_factors(3);
-		push(p1.elem[2]);
-		push(p1.elem[3]);
-		push(p1.elem[7]);
-		multiply_factors(3);
-		push_integer(-1);
-		push(p1.elem[2]);
-		push(p1.elem[4]);
-		push(p1.elem[6]);
-		multiply_factors(4);
-		push_integer(-1);
-		push(p1.elem[1]);
-		push(p1.elem[3]);
-		push(p1.elem[8]);
-		multiply_factors(4);
-		push_integer(-1);
-		push(p1.elem[0]);
-		push(p1.elem[5]);
-		push(p1.elem[7]);
-		multiply_factors(4);
-		add_terms(6);
-		return;
-	default:
-		break;
+		case 1:
+			push(p1.elem[0]);
+			return;
+		case 2:
+			push(p1.elem[0]);
+			push(p1.elem[3]);
+			multiply();
+			push(p1.elem[1]);
+			push(p1.elem[2]);
+			multiply();
+			subtract();
+			return;
+		case 3:
+			push(p1.elem[0]);
+			push(p1.elem[4]);
+			push(p1.elem[8]);
+			multiply_factors(3);
+			push(p1.elem[1]);
+			push(p1.elem[5]);
+			push(p1.elem[6]);
+			multiply_factors(3);
+			push(p1.elem[2]);
+			push(p1.elem[3]);
+			push(p1.elem[7]);
+			multiply_factors(3);
+			push_integer(-1);
+			push(p1.elem[2]);
+			push(p1.elem[4]);
+			push(p1.elem[6]);
+			multiply_factors(4);
+			push_integer(-1);
+			push(p1.elem[1]);
+			push(p1.elem[3]);
+			push(p1.elem[8]);
+			multiply_factors(4);
+			push_integer(-1);
+			push(p1.elem[0]);
+			push(p1.elem[5]);
+			push(p1.elem[7]);
+			multiply_factors(4);
+			add_terms(6);
+			return;
+		default:
+			break;
 	}
 
 	p2 = alloc_matrix(n - 1, n - 1);
@@ -6077,8 +5841,7 @@ det()
 		add_terms(n);
 }
 function
-eval_dim(p1)
-{
+	eval_dim(p1) {
 	var k, p2;
 
 	push(cadr(p1));
@@ -6104,8 +5867,7 @@ eval_dim(p1)
 	push_integer(p2.dim[k - 1]);
 }
 function
-eval_do(p1)
-{
+	eval_do(p1) {
 	push_symbol(NIL);
 	p1 = cdr(p1);
 	while (iscons(p1)) {
@@ -6116,13 +5878,11 @@ eval_do(p1)
 	}
 }
 function
-eval_dot(p1)
-{
+	eval_dot(p1) {
 	eval_inner(p1);
 }
 function
-eval_draw(p1)
-{
+	eval_draw(p1) {
 	var F, T;
 
 	if (drawing) {
@@ -6160,8 +5920,7 @@ eval_draw(p1)
 	drawing = 0;
 }
 function
-eval_eigenvec(p1)
-{
+	eval_eigenvec(p1) {
 	var i, j, n, D = [], Q = [];
 
 	push(cadr(p1));
@@ -6219,8 +5978,7 @@ eval_eigenvec(p1)
 }
 
 function
-eigenvec(D, Q, n)
-{
+	eigenvec(D, Q, n) {
 	var i;
 
 	for (i = 0; i < 100; i++)
@@ -6231,8 +5989,7 @@ eigenvec(D, Q, n)
 }
 
 function
-eigenvec_step(D, Q, n)
-{
+	eigenvec_step(D, Q, n) {
 	var count, i, j;
 
 	count = 0;
@@ -6252,8 +6009,7 @@ eigenvec_step(D, Q, n)
 }
 
 function
-eigenvec_step_nib(D, Q, n, p, q)
-{
+	eigenvec_step_nib(D, Q, n, p, q) {
 	var k;
 	var t, theta;
 	var c, cc, s, ss;
@@ -6310,16 +6066,14 @@ eigenvec_step_nib(D, Q, n, p, q)
 	D[n * q + p] = 0.0;
 }
 function
-eval_erf(p1)
-{
+	eval_erf(p1) {
 	push(cadr(p1));
 	evalf();
 	erffunc();
 }
 
 function
-erffunc()
-{
+	erffunc() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -6363,16 +6117,14 @@ erffunc()
 	list(2);
 }
 function
-eval_erfc(p1)
-{
+	eval_erfc(p1) {
 	push(cadr(p1));
 	evalf();
 	erfcfunc();
 }
 
 function
-erfcfunc()
-{
+	erfcfunc() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -6407,8 +6159,7 @@ erfcfunc()
 	list(2);
 }
 function
-eval_eval(p1)
-{
+	eval_eval(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = cddr(p1);
@@ -6425,8 +6176,7 @@ eval_eval(p1)
 // arithmetic subst
 
 function
-asubst()
-{
+	asubst() {
 	var h, i, n, p1, p2, p3;
 
 	p3 = pop(); // new expr
@@ -6514,8 +6264,7 @@ asubst()
 }
 
 function
-addcmp(p1, p2)
-{
+	addcmp(p1, p2) {
 	while (iscons(p1) && iscons(p2)) {
 		if (equal(car(p1), car(p2)))
 			p2 = cdr(p2);
@@ -6528,8 +6277,7 @@ addcmp(p1, p2)
 }
 
 function
-mulcmp(p1, p2)
-{
+	mulcmp(p1, p2) {
 	while (iscons(p1) && iscons(p2)) {
 		if (equal(car(p1), car(p2)) || (isexponential(car(p1)) && isexponential(car(p2)) && expcmp(car(p1), car(p2))))
 			p2 = cdr(p2);
@@ -6542,8 +6290,7 @@ mulcmp(p1, p2)
 }
 
 function
-expcmp(p1, p2)
-{
+	expcmp(p1, p2) {
 	p1 = caddr(p1);
 	p2 = caddr(p2);
 	if (car(p1) != symbol(ADD))
@@ -6559,36 +6306,31 @@ expcmp(p1, p2)
 	return 0;
 }
 function
-eval_exit()
-{
+	eval_exit() {
 	push_symbol(NIL);
 }
 function
-eval_exp(p1)
-{
+	eval_exp(p1) {
 	push(cadr(p1));
 	evalf();
 	expfunc();
 }
 
 function
-expfunc()
-{
+	expfunc() {
 	push_symbol(EXP1);
 	swap();
 	power();
 }
 function
-eval_expcos(p1)
-{
+	eval_expcos(p1) {
 	push(cadr(p1));
 	evalf();
 	expcos();
 }
 
 function
-expcos()
-{
+	expcos() {
 	var p1;
 	p1 = pop();
 
@@ -6610,16 +6352,14 @@ expcos()
 	add();
 }
 function
-eval_expcosh(p1)
-{
+	eval_expcosh(p1) {
 	push(cadr(p1));
 	evalf();
 	expcosh();
 }
 
 function
-expcosh()
-{
+	expcosh() {
 	var p1;
 	p1 = pop();
 	push(p1);
@@ -6632,16 +6372,14 @@ expcosh()
 	multiply();
 }
 function
-eval_expsin(p1)
-{
+	eval_expsin(p1) {
 	push(cadr(p1));
 	evalf();
 	expsin();
 }
 
 function
-expsin()
-{
+	expsin() {
 	var p1;
 	p1 = pop();
 
@@ -6667,16 +6405,14 @@ expsin()
 	subtract();
 }
 function
-eval_expsinh(p1)
-{
+	eval_expsinh(p1) {
 	push(cadr(p1));
 	evalf();
 	expsinh();
 }
 
 function
-expsinh()
-{
+	expsinh() {
 	var p1;
 	p1 = pop();
 	push(p1);
@@ -6691,16 +6427,14 @@ expsinh()
 // tan(z) = (i - i exp(2 i z)) / (exp(2 i z) + 1)
 
 function
-eval_exptan(p1)
-{
+	eval_exptan(p1) {
 	push(cadr(p1));
 	evalf();
 	exptan();
 }
 
 function
-exptan()
-{
+	exptan() {
 	var p1;
 
 	push_integer(2);
@@ -6723,16 +6457,14 @@ exptan()
 	divide();
 }
 function
-eval_exptanh(p1)
-{
+	eval_exptanh(p1) {
 	push(cadr(p1));
 	evalf();
 	exptanh();
 }
 
 function
-exptanh()
-{
+	exptanh() {
 	var p1;
 	push_integer(2);
 	multiply();
@@ -6747,16 +6479,14 @@ exptanh()
 	divide();
 }
 function
-eval_factorial(p1)
-{
+	eval_factorial(p1) {
 	push(cadr(p1));
 	evalf();
 	factorial();
 }
 
 function
-factorial()
-{
+	factorial() {
 	var i, m, n, p1;
 
 	p1 = pop();
@@ -6787,16 +6517,14 @@ factorial()
 	list(2);
 }
 function
-eval_float(p1)
-{
+	eval_float(p1) {
 	push(cadr(p1));
 	evalf();
 	floatfunc();
 }
 
 function
-floatfunc()
-{
+	floatfunc() {
 	floatfunc_subst();
 	evalf();
 	floatfunc_subst(); // in case pi popped up
@@ -6804,8 +6532,7 @@ floatfunc()
 }
 
 function
-floatfunc_subst()
-{
+	floatfunc_subst() {
 	var a, b, h, i, n, p1;
 
 	p1 = pop();
@@ -6882,16 +6609,14 @@ floatfunc_subst()
 	push(p1);
 }
 function
-eval_floor(p1)
-{
+	eval_floor(p1) {
 	push(cadr(p1));
 	evalf();
 	floorfunc();
 }
 
 function
-floorfunc()
-{
+	floorfunc() {
 	var a, b, d, i, n, p1;
 
 	p1 = pop();
@@ -6938,8 +6663,7 @@ floorfunc()
 	list(2);
 }
 function
-eval_for(p1)
-{
+	eval_for(p1) {
 	var j, k, p2, p3;
 
 	p2 = cadr(p1);
@@ -6966,7 +6690,7 @@ eval_for(p1)
 
 	save_symbol(p2);
 
-	for (;;) {
+	for (; ;) {
 		push_integer(j);
 		p3 = pop();
 		set_symbol(p2, p3, symbol(NIL));
@@ -6990,8 +6714,7 @@ eval_for(p1)
 	push_symbol(NIL); // return value
 }
 function
-eval_hadamard(p1)
-{
+	eval_hadamard(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = cddr(p1);
@@ -7004,8 +6727,7 @@ eval_hadamard(p1)
 }
 
 function
-hadamard()
-{
+	hadamard() {
 	var i, n, p1, p2;
 
 	p2 = pop();
@@ -7041,16 +6763,14 @@ hadamard()
 	push(p1);
 }
 function
-eval_imag(p1)
-{
+	eval_imag(p1) {
 	push(cadr(p1));
 	evalf();
 	imag();
 }
 
 function
-imag()
-{
+	imag() {
 	var i, n, p1;
 
 	p1 = pop();
@@ -7079,8 +6799,7 @@ imag()
 	multiply_factors(3);
 }
 function
-eval_index(p1)
-{
+	eval_index(p1) {
 	var h, n, T;
 
 	T = cadr(p1);
@@ -7122,8 +6841,7 @@ eval_index(p1)
 }
 
 function
-indexfunc(T, h)
-{
+	indexfunc(T, h) {
 	var i, k, m, n, p1, r, t, w;
 
 	m = T.dim.length;
@@ -7170,8 +6888,7 @@ indexfunc(T, h)
 	push(p1);
 }
 function
-eval_infixform(p1)
-{
+	eval_infixform(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = pop();
@@ -7182,8 +6899,7 @@ eval_infixform(p1)
 	push_string(outbuf);
 }
 function
-eval_inner(p1)
-{
+	eval_inner(p1) {
 	var h = stack.length;
 
 	// evaluate from right to left
@@ -7209,8 +6925,7 @@ eval_inner(p1)
 }
 
 function
-inner()
-{
+	inner() {
 	var i, j, k, n, mcol, mrow, ncol, ndim, nrow, p1, p2, p3;
 
 	p2 = pop();
@@ -7304,7 +7019,7 @@ inner()
 }
 var integral_tab_exp = [
 
-// x^n exp(a x + b)
+	// x^n exp(a x + b)
 
 	"exp(a x)",
 	"exp(a x) / a",
@@ -7402,7 +7117,7 @@ var integral_tab_exp = [
 	"x^11 exp(a x + b) / a - 11 x^10 exp(a x + b) / a^2 + 110 x^9 exp(a x + b) / a^3 - 990 x^8 exp(a x + b) / a^4 + 7920 x^7 exp(a x + b) / a^5 - 55440 x^6 exp(a x + b) / a^6 + 332640 x^5 exp(a x + b) / a^7 - 1663200 x^4 exp(a x + b) / a^8 + 6652800 x^3 exp(a x + b) / a^9 - 19958400 x^2 exp(a x + b) / a^10 + 39916800 x exp(a x + b) / a^11 - 39916800 exp(a x + b) / a^12",
 	"1",
 
-// sin exp
+	// sin exp
 
 	"sin(x) exp(a x)",
 	"a sin(x) exp(a x) / (a^2 + 1) - cos(x) exp(a x) / (a^2 + 1)",
@@ -7428,7 +7143,7 @@ var integral_tab_exp = [
 	"-1/4 exp(b - 2 i x) - 1/2 i x exp(b)",
 	"1",
 
-// cos exp
+	// cos exp
 
 	"cos(x) exp(a x)",
 	"a cos(x) exp(a x) / (a^2 + 1) + sin(x) exp(a x) / (a^2 + 1)",
@@ -7454,13 +7169,13 @@ var integral_tab_exp = [
 	"1/2 x exp(b) + 1/4 i exp(b - 2 i x)",
 	"1",
 
-// sin cos exp
+	// sin cos exp
 
 	"sin(x) cos(x) exp(a x)",
 	"a sin(2 x) exp(a x) / (2 (a^2 + 4)) - cos(2 x) exp(a x) / (a^2 + 4)",
 	"a^2 + 4", // denominator not zero
 
-// x^n exp(a x^2 + b)
+	// x^n exp(a x^2 + b)
 
 	"exp(a x^2)",
 	"-1/2 i sqrt(pi) erf(i sqrt(a) x) / sqrt(a)",
@@ -7606,7 +7321,7 @@ var integral_tab_trig = [
 	"-log(cos(a x)) / a",
 	"1",
 
-// sin(a x)^n
+	// sin(a x)^n
 
 	"sin(a x)^2",
 	"-sin(2 a x) / (4 a) + 1/2 x",
@@ -7628,7 +7343,7 @@ var integral_tab_trig = [
 	"sin(2 a x)^3 / (48 a) - sin(2 a x) / (4 a) + 3 sin(4 a x) / (64 a) + 5/16 x",
 	"1",
 
-// cos(a x)^n
+	// cos(a x)^n
 
 	"cos(a x)^2",
 	"sin(2 a x) / (4 a) + 1/2 x",
@@ -7650,7 +7365,7 @@ var integral_tab_trig = [
 	"-sin(2 a x)^3 / (48 a) + sin(2 a x) / (4 a) + 3 sin(4 a x) / (64 a) + 5/16 x",
 	"1",
 
-//
+	//
 
 	"sin(a x) cos(a x)",
 	"1/2 sin(a x)^2 / a",
@@ -7667,23 +7382,23 @@ var integral_tab_trig = [
 	"sin(a x)^2 cos(a x)^2",
 	"1/8 x - 1/32 sin(4 a x) / a",
 	"1",
-// 329
+	// 329
 	"1 / sin(a x) / cos(a x)",
 	"log(tan(a x)) / a",
 	"1",
-// 330
+	// 330
 	"1 / sin(a x) / cos(a x)^2",
 	"(1 / cos(a x) + log(tan(a x 1/2))) / a",
 	"1",
-// 331
+	// 331
 	"1 / sin(a x)^2 / cos(a x)",
 	"(log(tan(pi 1/4 + a x 1/2)) - 1 / sin(a x)) / a",
 	"1",
-// 333
+	// 333
 	"1 / sin(a x)^2 / cos(a x)^2",
 	"-2 / (a tan(2 a x))",
 	"1",
-//
+	//
 	"sin(a x) / cos(a x)",
 	"-log(cos(a x)) / a",
 	"1",
@@ -7836,7 +7551,7 @@ var integral_tab_trig = [
 	"-sin(a x)^5 / (5 a) + sin(a x)^3 / a - 3 sin(a x) / a - 1 / (a sin(a x))",
 	"1",
 
-// cos(a x)^n / sin(a x)
+	// cos(a x)^n / sin(a x)
 
 	"cos(a x)^2 / sin(a x)",
 	"cos(a x) / a + log(tan(1/2 a x)) / a",
@@ -7872,15 +7587,15 @@ var integral_tab_power = [
 	"1 / (a + b x)",
 	"log(a + b x) / b",
 	"1",
-// 124
+	// 124
 	"sqrt(a x + b)",
 	"2/3 (a x + b)^(3/2) / a",
 	"1",
-// 138
+	// 138
 	"sqrt(a x^2 + b)",
 	"1/2 x sqrt(a x^2 + b) + 1/2 b log(sqrt(a) sqrt(a x^2 + b) + a x) / sqrt(a)",
 	"1",
-// 131
+	// 131
 	"1 / sqrt(a x + b)",
 	"2 sqrt(a x + b) / a",
 	"1",
@@ -7892,11 +7607,11 @@ var integral_tab_power = [
 	"1 / ((a + b x)^3)",
 	"-1 / ((2 b) ((a + b x)^2))",
 	"1",
-// 16
+	// 16
 	"1 / (a x^2 + b)",
 	"arctan(sqrt(a) x / sqrt(b)) / sqrt(a) / sqrt(b)",
 	"1",
-// 17
+	// 17
 	"1 / sqrt(1 - x^2)",
 	"arcsin(x)",
 	"1",
@@ -7908,30 +7623,30 @@ var integral_tab_power = [
 	"1 / sqrt(a x^2 + b)",
 	"log(sqrt(a) sqrt(a x^2 + b) + a x) / sqrt(a)",
 	"1",
-// 65
+	// 65
 	"1 / (a x^2 + b)^2",
 	"1/2 ((arctan((sqrt(a) x) / sqrt(b))) / (sqrt(a) b^(3/2)) + x / (a b x^2 + b^2))",
 	"1",
-// 67 (m=2)
+	// 67 (m=2)
 	"1 / (a + b x^2)^3",
 	"x / (a + b x^2)^2 / (4 a) + 3 x / (8 a (a^2 + a b x^2)) + 3 arctan(b^(1/2) x / a^(1/2),1) / (8 a^(5/2) b^(1/2))",
 	"1",
-// 67 (m=3)
+	// 67 (m=3)
 	"1 / (a + b x^2)^4",
 	"11 x / (16 a (a + b x^2)^3) + 5 b x^3 / (6 a^2 (a + b x^2)^3) + 5 b^2 x^5 / (16 a^3 (a + b x^2)^3) + 5 arctan(b^(1/2) x / a^(1/2),1) / (16 a^(7/2) b^(1/2))",
 	"1",
-// 165
+	// 165
 	"(a x^2 + b)^(-3/2)",
 	"x / b / sqrt(a x^2 + b)",
 	"1",
-// 74
+	// 74
 	"1 / (a x^3 + b)",
 	"-log(a^(2/3) x^2 - a^(1/3) b^(1/3) x + b^(2/3))/(6 a^(1/3) b^(2/3))" +
 	" + log(a^(1/3) x + b^(1/3))/(3 a^(1/3) b^(2/3))" +
 	" - (i log(1 - (i (1 - (2 a^(1/3) x)/b^(1/3)))/sqrt(3)))/(2 sqrt(3) a^(1/3) b^(2/3))" +
 	" + (i log(1 + (i (1 - (2 a^(1/3) x)/b^(1/3)))/sqrt(3)))/(2 sqrt(3) a^(1/3) b^(2/3))", // from Wolfram Alpha
 	"1",
-// 77 78
+	// 77 78
 	"1 / (a x^4 + b)",
 	"-log(-sqrt(2) a^(1/4) b^(1/4) x + sqrt(a) x^2 + sqrt(b))/(4 sqrt(2) a^(1/4) b^(3/4))" +
 	" + log(sqrt(2) a^(1/4) b^(1/4) x + sqrt(a) x^2 + sqrt(b))/(4 sqrt(2) a^(1/4) b^(3/4))" +
@@ -7940,7 +7655,7 @@ var integral_tab_power = [
 	" + (i log(1 - i ((sqrt(2) a^(1/4) x)/b^(1/4) + 1)))/(4 sqrt(2) a^(1/4) b^(3/4))" +
 	" - (i log(1 + i ((sqrt(2) a^(1/4) x)/b^(1/4) + 1)))/(4 sqrt(2) a^(1/4) b^(3/4))", // from Wolfram Alpha
 	"1",
-//
+	//
 	"1 / (a x^5 + b)",
 	"(sqrt(5) log(2 a^(2/5) x^2 + (sqrt(5) - 1) a^(1/5) b^(1/5) x + 2 b^(2/5))" +
 	" - log(2 a^(2/5) x^2 + (sqrt(5) - 1) a^(1/5) b^(1/5) x + 2 b^(2/5))" +
@@ -7950,11 +7665,11 @@ var integral_tab_power = [
 	" + 2 sqrt(2 (5 + sqrt(5))) arctan((4 a^(1/5) x + (sqrt(5) - 1) b^(1/5))/(sqrt(2 (5 + sqrt(5))) b^(1/5)))" +
 	" + 2 sqrt(10 - 2 sqrt(5)) arctan((4 a^(1/5) x - (1 + sqrt(5)) b^(1/5))/(sqrt(10 - 2 sqrt(5)) b^(1/5))))/(20 a^(1/5) b^(4/5))", // from Wolfram Alpha
 	"1",
-// 164
+	// 164
 	"sqrt(a + x^6 + 3 a^(1/3) x^4 + 3 a^(2/3) x^2)",
 	"1/4 (x sqrt((x^2 + a^(1/3))^3) + 3/2 a^(1/3) x sqrt(x^2 + a^(1/3)) + 3/2 a^(2/3) log(x + sqrt(x^2 + a^(1/3))))",
 	"1",
-// 165
+	// 165
 	"sqrt(-a + x^6 - 3 a^(1/3) x^4 + 3 a^(2/3) x^2)",
 	"1/4 (x sqrt((x^2 - a^(1/3))^3) - 3/2 a^(1/3) x sqrt(x^2 - a^(1/3)) + 3/2 a^(2/3) log(x + sqrt(x^2 - a^(1/3))))",
 	"1",
@@ -7981,7 +7696,7 @@ var integral_tab = [
 	"x",
 	"1/2 x^2",
 	"1",
-// 18
+	// 18
 	"x / sqrt(a x^2 + b)",
 	"sqrt(a x^2 + b) / a",
 	"1",
@@ -7993,11 +7708,11 @@ var integral_tab = [
 	"x / ((a + b x)^2)",
 	"(log(a + b x) + a / (a + b x)) / (b^2)",
 	"1",
-// 33
+	// 33
 	"x^2 / (a + b x)",
 	"a^2 log(a + b x) / b^3 + x (b x - 2 a) / (2 b^2)",
 	"1",
-// 34
+	// 34
 	"x^2 / (a + b x)^2",
 	"(-a^2 / (a + b x) - 2 a log(a + b x) + b x) / b^3",
 	"1",
@@ -8033,59 +7748,59 @@ var integral_tab = [
 	"x / (a + b x^2)",
 	"log(a + b x^2) / (2 b)",
 	"1",
-// 64
+	// 64
 	"x^2 / (a x^2 + b)",
 	"1/2 i a^(-3/2) sqrt(b) (log(1 + i sqrt(a) x / sqrt(b)) - log(1 - i sqrt(a) x / sqrt(b))) + x / a",
 	"1",
-// 68 (m=1)
+	// 68 (m=1)
 	"x / (a + b x^2)^2",
 	"-1 / (2 b (a + b x^2))",
 	"1",
-// 68 (m=2)
+	// 68 (m=2)
 	"x / (a + b x^2)^3",
 	"-1 / (4 b (a + b x^2)^2)",
 	"1",
-// 68 (m=3)
+	// 68 (m=3)
 	"x / (a + b x^2)^4",
 	"-1 / (6 b (a + b x^2)^3)",
 	"1",
-// 69 (m=1)
+	// 69 (m=1)
 	"x^2 / (a + b x^2)^2",
 	"-x / (2 b (a + b x^2)) + arctan(sqrt(b/a) x) / (2 sqrt(a b^3))",
 	"1",
-// 69 (m=2)
+	// 69 (m=2)
 	"x^2 / (a + b x^2)^3",
 	"x^3 / (8 a (a + b x^2)^2) + arctan(b^(1/2) x / a^(1/2),1) / (8 a^(3/2) b^(3/2)) - x / (8 b (a + b x^2)^2)",
 	"1",
-// 69 (m=3)
+	// 69 (m=3)
 	"x^2 / (a + b x^2)^4",
 	"x^3 / (6 a (a + b x^2)^3) + b x^5 / (16 a^2 (a + b x^2)^3) + arctan(b^(1/2) x / a^(1/2),1) / (16 a^(5/2) b^(3/2)) - x / (16 b (a + b x^2)^3)",
 	"1",
-// 70
+	// 70
 	"1 / x * 1 / (a + b x^2)",
 	"1 log(x^2 / (a + b x^2)) / (2 a)",
 	"1",
-// 71
+	// 71
 	"1 / x^2 * 1 / (a x^2 + b)",
 	"1/2 i sqrt(a) b^(-3/2) (log(1 + i sqrt(a) x / sqrt(b)) - log(1 - i sqrt(a) x / sqrt(b))) - 1 / (b x)",
 	"1",
-// 75
+	// 75
 	"x / (a x^3 + b)",
 	"log(a^(2/3) x^2 - a^(1/3) b^(1/3) x + b^(2/3))/(6 a^(2/3) b^(1/3))" +
 	" - log(a^(1/3) x + b^(1/3))/(3 a^(2/3) b^(1/3))" +
 	" - (i log(1 - (i (1 - (2 a^(1/3) x)/b^(1/3)))/sqrt(3)))/(2 sqrt(3) a^(2/3) b^(1/3))" +
 	" + (i log(1 + (i (1 - (2 a^(1/3) x)/b^(1/3)))/sqrt(3)))/(2 sqrt(3) a^(2/3) b^(1/3))", // from Wolfram Alpha
 	"1",
-// 76
+	// 76
 	"x^2 / (a + b x^3)",
 	"1 log(a + b x^3) / (3 b)",
 	"1",
-// 79 80
+	// 79 80
 	"x / (a x^4 + b)",
 	"(i log(1 - (i sqrt(a) x^2)/sqrt(b)))/(4 sqrt(a) sqrt(b))" +
 	" - (i log(1 + (i sqrt(a) x^2)/sqrt(b)))/(4 sqrt(a) sqrt(b))", // from Wolfram Alpha
 	"1",
-// 81 82
+	// 81 82
 	"x^2 / (a x^4 + b)",
 	"log(-sqrt(2) a^(1/4) b^(1/4) x + sqrt(a) x^2 + sqrt(b))/(4 sqrt(2) a^(3/4) b^(1/4))" +
 	" - log(sqrt(2) a^(1/4) b^(1/4) x + sqrt(a) x^2 + sqrt(b))/(4 sqrt(2) a^(3/4) b^(1/4))" +
@@ -8094,7 +7809,7 @@ var integral_tab = [
 	" + (i log(1 - i ((sqrt(2) a^(1/4) x)/b^(1/4) + 1)))/(4 sqrt(2) a^(3/4) b^(1/4))" +
 	" - (i log(1 + i ((sqrt(2) a^(1/4) x)/b^(1/4) + 1)))/(4 sqrt(2) a^(3/4) b^(1/4))", // from Wolfram Alpha
 	"1",
-//
+	//
 	"x^3 / (a + b x^4)",
 	"1 log(a + b x^4) / (4 b)",
 	"1",
@@ -8110,11 +7825,11 @@ var integral_tab = [
 	"x^2 sqrt(a + b x^2)",
 	"(sqrt(b) x sqrt(a + b x^2) (a + 2 b x^2) - a^2 log(sqrt(b) sqrt(a + b x^2) + b x)) / (8 b^(3/2))",
 	"1",
-// 128
+	// 128
 	"sqrt(a x + b) / x",
 	"2 sqrt(a x + b) - 2 sqrt(b) arctanh(sqrt(a x + b) / sqrt(b))",
 	"1",
-// 129
+	// 129
 	"sqrt(a x + b) / x^2",
 	"-sqrt(a x + b) / x - a arctanh(sqrt(a x + b) / sqrt(b)) / sqrt(b)",
 	"1",
@@ -8126,27 +7841,27 @@ var integral_tab = [
 	"x^2 / sqrt(a + b x)",
 	"2 (8 a^2 - 4 a b x + 3 b^2 x^2) sqrt(a + b x) / (15 (b^3))",
 	"1",
-// 134
+	// 134
 	"1 / x / sqrt(a x + b)",
 	"-2 arctanh(sqrt(a x + b) / sqrt(b)) / sqrt(b)",
 	"1",
-// 137
+	// 137
 	"1 / x^2 / sqrt(a x + b)",
 	"a arctanh(sqrt(a x + b) / sqrt(b)) / b^(3/2) - sqrt(a x + b) / (b x)",
 	"1",
-// 158
+	// 158
 	"1 / x / sqrt(a x^2 + b)",
 	"(log(x) - log(sqrt(b) sqrt(a x^2 + b) + b)) / sqrt(b)",
 	"1",
-// 160
+	// 160
 	"sqrt(a x^2 + b) / x",
 	"sqrt(a x^2 + b) - sqrt(b) log(sqrt(b) sqrt(a x^2 + b) + b) + sqrt(b) log(x)",
 	"1",
-// 163
+	// 163
 	"x sqrt(a x^2 + b)",
 	"1/3 (a x^2 + b)^(3/2) / a",
 	"1",
-// 166
+	// 166
 	"x (a x^2 + b)^(-3/2)",
 	"-1 / a / sqrt(a x^2 + b)",
 	"1",
@@ -8154,35 +7869,35 @@ var integral_tab = [
 	"x sqrt(a + x^6 + 3 a^(1/3) x^4 + 3 a^(2/3) x^2)",
 	"1/5 sqrt((x^2 + a^(1/3))^5)",
 	"1",
-// 168
+	// 168
 	"x^2 sqrt(a x^2 + b)",
 	"1/8 a^(-3/2) (sqrt(a) x sqrt(a x^2 + b) (2 a x^2 + b) - b^2 log(sqrt(a) sqrt(a x^2 + b) + a x))",
 	"and(number(a),a>0)",
-// 169
+	// 169
 	"x^3 sqrt(a x^2 + b)",
 	"1/15 sqrt(a x^2 + b) (3 a^2 x^4 + a b x^2 - 2 b^2) / a^2",
 	"1",
-// 171
+	// 171
 	"x^2 / sqrt(a x^2 + b)",
 	"1/2 a^(-3/2) (sqrt(a) x sqrt(a x^2 + b) - b log(sqrt(a) sqrt(a x^2 + b) + a x))",
 	"1",
-// 172
+	// 172
 	"x^3 / sqrt(a x^2 + b)",
 	"1/3 (a x^2 - 2 b) sqrt(a x^2 + b) / a^2",
 	"1",
-// 173
+	// 173
 	"1 / x^2 / sqrt(a x^2 + b)",
 	"-sqrt(a x^2 + b) / (b x)",
 	"1",
-// 174
+	// 174
 	"1 / x^3 / sqrt(a x^2 + b)",
 	"-sqrt(a x^2 + b) / (2 b x^2) + a (log(sqrt(b) sqrt(a x^2 + b) + b) - log(x)) / (2 b^(3/2))",
 	"1",
-// 216
+	// 216
 	"sqrt(a x^2 + b) / x^2",
 	"sqrt(a) log(sqrt(a) sqrt(a x^2 + b) + a x) - sqrt(a x^2 + b) / x",
 	"and(number(a),a>0)",
-// 217
+	// 217
 	"sqrt(a x^2 + b) / x^3",
 	"1/2 (-sqrt(a x^2 + b) / x^2 - (a log(sqrt(b) sqrt(a x^2 + b) + b)) / sqrt(b) + (a log(x)) / sqrt(b))",
 	"and(number(b),b>0)",
@@ -8237,8 +7952,7 @@ var integral_tab = [
 ];
 
 function
-eval_integral(p1)
-{
+	eval_integral(p1) {
 	var flag, i, n, X, Y;
 
 	push(cadr(p1));
@@ -8307,8 +8021,7 @@ eval_integral(p1)
 }
 
 function
-integral()
-{
+	integral() {
 	var h, p1, F, X;
 
 	X = pop();
@@ -8344,8 +8057,7 @@ integral()
 }
 
 function
-integral_nib(F, X)
-{
+	integral_nib(F, X) {
 	var h;
 
 	save_symbol(symbol(SA));
@@ -8372,8 +8084,7 @@ integral_nib(F, X)
 }
 
 function
-integral_lookup(h, F)
-{
+	integral_lookup(h, F) {
 	var t;
 
 	t = integral_classify(F);
@@ -8399,8 +8110,7 @@ integral_lookup(h, F)
 }
 
 function
-integral_classify(p)
-{
+	integral_classify(p) {
 	var t = 0;
 
 	if (iscons(p)) {
@@ -8424,8 +8134,7 @@ integral_classify(p)
 }
 
 function
-integral_search(h, F, table, n)
-{
+	integral_search(h, F, table, n) {
 	var i, C, I;
 
 	for (i = 0; i < n; i += 3) {
@@ -8452,8 +8161,7 @@ integral_search(h, F, table, n)
 }
 
 function
-integral_search_nib(h, F, I, C)
-{
+	integral_search_nib(h, F, I, C) {
 	var i, j, p1;
 
 	for (i = h; i < stack.length; i++) {
@@ -8483,16 +8191,14 @@ integral_search_nib(h, F, I, C)
 	return 0;					// no
 }
 function
-eval_inv(p1)
-{
+	eval_inv(p1) {
 	push(cadr(p1));
 	evalf();
 	inv();
 }
 
 function
-inv()
-{
+	inv() {
 	var p1;
 
 	p1 = pop();
@@ -8515,8 +8221,7 @@ inv()
 	divide();
 }
 function
-eval_kronecker(p1)
-{
+	eval_kronecker(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = cddr(p1);
@@ -8529,8 +8234,7 @@ eval_kronecker(p1)
 }
 
 function
-kronecker()
-{
+	kronecker() {
 	var h, i, j, k, l, m, n, p, q, p1, p2, p3;
 
 	p2 = pop();
@@ -8578,16 +8282,14 @@ kronecker()
 	push(p3);
 }
 function
-eval_log(p1)
-{
+	eval_log(p1) {
 	push(cadr(p1));
 	evalf();
 	logfunc();
 }
 
 function
-logfunc()
-{
+	logfunc() {
 	var d, h, i, n, p1, p2;
 
 	p1 = pop();
@@ -8719,16 +8421,14 @@ logfunc()
 	list(2);
 }
 function
-eval_mag(p1)
-{
+	eval_mag(p1) {
 	push(cadr(p1));
 	evalf();
 	magfunc();
 }
 
 function
-magfunc()
-{
+	magfunc() {
 	var i, n, p1, num, den;
 
 	p1 = pop();
@@ -8759,8 +8459,7 @@ magfunc()
 }
 
 function
-magfunc_nib()
-{
+	magfunc_nib() {
 	var h, p1, x, y;
 
 	p1 = pop();
@@ -8837,8 +8536,7 @@ magfunc_nib()
 	push(p1);
 }
 function
-eval_minor(p1)
-{
+	eval_minor(p1) {
 	var i, j, p2;
 
 	push(cadr(p1));
@@ -8866,8 +8564,7 @@ eval_minor(p1)
 	det();
 }
 function
-eval_minormatrix(p1)
-{
+	eval_minormatrix(p1) {
 	var i, j, p2;
 
 	push(cadr(p1));
@@ -8894,8 +8591,7 @@ eval_minormatrix(p1)
 }
 
 function
-minormatrix(row, col)
-{
+	minormatrix(row, col) {
 	var i, j, k, m, n, p1, p2;
 
 	p1 = pop();
@@ -8949,8 +8645,7 @@ minormatrix(row, col)
 	push(p2);
 }
 function
-eval_mod(p1)
-{
+	eval_mod(p1) {
 	push(cadr(p1));
 	evalf();
 	push(caddr(p1));
@@ -8959,8 +8654,7 @@ eval_mod(p1)
 }
 
 function
-modfunc()
-{
+	modfunc() {
 	var d1, d2, i, n, p1, p2;
 
 	p2 = pop();
@@ -9002,8 +8696,7 @@ modfunc()
 }
 
 function
-mod_rationals(p1, p2)
-{
+	mod_rationals(p1, p2) {
 	if (isinteger(p1) && isinteger(p2)) {
 		mod_integers(p1, p2);
 		return;
@@ -9022,16 +8715,14 @@ mod_rationals(p1, p2)
 }
 
 function
-mod_integers(p1, p2)
-{
+	mod_integers(p1, p2) {
 	var a, b;
 	a = bignum_mod(p1.a, p2.a);
 	b = bignum_int(1);
 	push_bignum(p1.sign, a, b);
 }
 function
-eval_multiply(p1)
-{
+	eval_multiply(p1) {
 	var h = stack.length;
 	expanding--; // undo expanding++ in evalf
 	p1 = cdr(p1);
@@ -9045,14 +8736,12 @@ eval_multiply(p1)
 }
 
 function
-multiply()
-{
+	multiply() {
 	multiply_factors(2);
 }
 
 function
-multiply_factors(n)
-{
+	multiply_factors(n) {
 	var h, T;
 
 	if (n < 2)
@@ -9073,8 +8762,7 @@ multiply_factors(n)
 }
 
 function
-flatten_factors(h)
-{
+	flatten_factors(h) {
 	var i, n, p1;
 	n = stack.length;
 	for (i = h; i < n; i++) {
@@ -9091,8 +8779,7 @@ flatten_factors(h)
 }
 
 function
-multiply_tensor_factors(h)
-{
+	multiply_tensor_factors(h) {
 	var i, p1, T;
 	T = symbol(NIL);
 	for (i = h; i < stack.length; i++) {
@@ -9113,8 +8800,7 @@ multiply_tensor_factors(h)
 }
 
 function
-multiply_scalar_factors(h)
-{
+	multiply_scalar_factors(h) {
 	var n, COEF;
 
 	COEF = combine_numerical_factors(h, one);
@@ -9152,24 +8838,23 @@ multiply_scalar_factors(h)
 	n = stack.length - h;
 
 	switch (n) {
-	case 0:
-		push_integer(1); // all factors canceled
-		break;
-	case 1:
-		break;
-	default:
-		sort_factors(n); // previously sorted provisionally
-		list(n);
-		push_symbol(MULTIPLY);
-		swap();
-		cons(); // prepend MULTIPLY to list
-		break;
+		case 0:
+			push_integer(1); // all factors canceled
+			break;
+		case 1:
+			break;
+		default:
+			sort_factors(n); // previously sorted provisionally
+			list(n);
+			push_symbol(MULTIPLY);
+			swap();
+			cons(); // prepend MULTIPLY to list
+			break;
 	}
 }
 
 function
-combine_numerical_factors(h, COEF)
-{
+	combine_numerical_factors(h, COEF) {
 	var i, p1;
 	for (i = h; i < stack.length; i++) {
 		p1 = stack[i];
@@ -9186,8 +8871,7 @@ combine_numerical_factors(h, COEF)
 // factors that have the same base are combined by adding exponents
 
 function
-combine_factors(h)
-{
+	combine_factors(h) {
 	var i;
 	sort_factors_provisional(h);
 	for (i = h; i < stack.length - 1; i++) {
@@ -9199,8 +8883,7 @@ combine_factors(h)
 }
 
 function
-combine_factors_nib(i, j)
-{
+	combine_factors_nib(i, j) {
 	var p1, p2, BASE1, EXPO1, BASE2, EXPO2;
 
 	p1 = stack[i];
@@ -9241,15 +8924,13 @@ combine_factors_nib(i, j)
 }
 
 function
-sort_factors_provisional(h)
-{
+	sort_factors_provisional(h) {
 	var t = stack.splice(h).sort(cmp_factors_provisional);
 	stack = stack.concat(t);
 }
 
 function
-cmp_factors_provisional(p1, p2)
-{
+	cmp_factors_provisional(p1, p2) {
 	if (car(p1) == symbol(POWER))
 		p1 = cadr(p1); // p1 = base
 
@@ -9260,8 +8941,7 @@ cmp_factors_provisional(p1, p2)
 }
 
 function
-normalize_power_factors(h)
-{
+	normalize_power_factors(h) {
 	var i, k, p1;
 	k = stack.length;
 	for (i = h; i < k; i++) {
@@ -9285,8 +8965,7 @@ normalize_power_factors(h)
 }
 
 function
-expand_sum_factors(h)
-{
+	expand_sum_factors(h) {
 	var i, n, p1, p2;
 
 	if (stack.length - h < 2)
@@ -9332,15 +9011,13 @@ expand_sum_factors(h)
 }
 
 function
-sort_factors(n)
-{
+	sort_factors(n) {
 	var t = stack.splice(stack.length - n).sort(cmp_factors);
 	stack = stack.concat(t);
 }
 
 function
-cmp_factors(p1, p2)
-{
+	cmp_factors(p1, p2) {
 	var a, b, c;
 	var base1, base2, expo1, expo2;
 
@@ -9385,8 +9062,7 @@ cmp_factors(p1, p2)
 //  6	derivative
 
 function
-order_factor(p)
-{
+	order_factor(p) {
 	if (isnum(p))
 		return 1;
 
@@ -9417,8 +9093,7 @@ order_factor(p)
 }
 
 function
-multiply_numbers(p1, p2)
-{
+	multiply_numbers(p1, p2) {
 	var d1, d2;
 
 	if (isrational(p1) && isrational(p2)) {
@@ -9436,8 +9111,7 @@ multiply_numbers(p1, p2)
 }
 
 function
-multiply_rationals(p1, p2)
-{
+	multiply_rationals(p1, p2) {
 	var a, b, d, sign;
 
 	if (iszero(p1) || iszero(p2)) {
@@ -9471,8 +9145,7 @@ multiply_rationals(p1, p2)
 // for example, 2 / sqrt(2) -> sqrt(2)
 
 function
-reduce_radical_factors(h, COEF)
-{
+	reduce_radical_factors(h, COEF) {
 	if (!any_radical_factors(h))
 		return COEF;
 
@@ -9483,8 +9156,7 @@ reduce_radical_factors(h, COEF)
 }
 
 function
-any_radical_factors(h)
-{
+	any_radical_factors(h) {
 	var i;
 	for (i = h; i < stack.length; i++)
 		if (isradical(stack[i]))
@@ -9493,8 +9165,7 @@ any_radical_factors(h)
 }
 
 function
-reduce_radical_double(h, COEF)
-{
+	reduce_radical_double(h, COEF) {
 	var a, b, c, i, p1;
 
 	c = COEF.d;
@@ -9526,8 +9197,7 @@ reduce_radical_double(h, COEF)
 }
 
 function
-reduce_radical_rational(h, COEF)
-{
+	reduce_radical_rational(h, COEF) {
 	var i, k, p1, p2, NUMER, DENOM, BASE, EXPO;
 
 	if (isplusone(COEF) || isminusone(COEF))
@@ -9603,16 +9273,14 @@ reduce_radical_rational(h, COEF)
 }
 
 function
-multiply_expand()
-{
+	multiply_expand() {
 	expanding++;
 	multiply();
 	expanding--;
 }
 
 function
-multiply_noexpand()
-{
+	multiply_noexpand() {
 	var t;
 	t = expanding;
 	expanding = 0;
@@ -9621,33 +9289,28 @@ multiply_noexpand()
 }
 
 function
-negate()
-{
+	negate() {
 	push_integer(-1);
 	multiply();
 }
 
 function
-reciprocate()
-{
+	reciprocate() {
 	push_integer(-1);
 	power();
 }
 
 function
-divide()
-{
+	divide() {
 	reciprocate();
 	multiply();
 }
 function
-eval_nil()
-{
+	eval_nil() {
 	push_symbol(NIL);
 }
 function
-eval_noexpand(p1)
-{
+	eval_noexpand(p1) {
 	var t;
 
 	t = expanding;
@@ -9659,8 +9322,7 @@ eval_noexpand(p1)
 	expanding = t;
 }
 function
-eval_nonstop()
-{
+	eval_nonstop() {
 	if (nonstop) {
 		pop();
 		push_symbol(NIL);
@@ -9673,8 +9335,7 @@ eval_nonstop()
 }
 
 function
-eval_nonstop_nib()
-{
+	eval_nonstop_nib() {
 	var save_tos, save_tof, save_eval_level, save_expanding;
 
 	try {
@@ -9698,8 +9359,7 @@ eval_nonstop_nib()
 	}
 }
 function
-eval_not(p1)
-{
+	eval_not(p1) {
 	push(cadr(p1));
 	evalp();
 	p1 = pop();
@@ -9712,8 +9372,7 @@ const DELTA = 1e-6;
 const EPSILON = 1e-9;
 
 function
-eval_nroots(p1)
-{
+	eval_nroots(p1) {
 	push(cadr(p1));
 	evalf();
 
@@ -9729,8 +9388,7 @@ eval_nroots(p1)
 }
 
 function
-nroots()
-{
+	nroots() {
 	var h, i, n;
 	var A, P, X, RE, IM;
 	var ar, ai, d, xr, xi, yr, yi;
@@ -9841,8 +9499,7 @@ nroots()
 }
 
 function
-nfindroot(cr, ci, n, par, pai)
-{
+	nfindroot(cr, ci, n, par, pai) {
 	var i, j;
 	var d;
 	var ar, br, dfr, dxr, far, fbr, tr = [], xr, yr;
@@ -9948,8 +9605,7 @@ nfindroot(cr, ci, n, par, pai)
 // compute f at a
 
 function
-fata(cr, ci, n, ar, ai, far, fai)
-{
+	fata(cr, ci, n, ar, ai, far, fai) {
 	var k;
 	var xr, xi, yr, yi;
 
@@ -9976,8 +9632,7 @@ fata(cr, ci, n, ar, ai, far, fai)
 // divide by x - a
 
 function
-nreduce(cr, ci, n, ar, ai)
-{
+	nreduce(cr, ci, n, ar, ai) {
 	var k;
 
 	// divide
@@ -9999,19 +9654,16 @@ nreduce(cr, ci, n, ar, ai)
 }
 
 function
-zabs(r, i)
-{
+	zabs(r, i) {
 	return Math.sqrt(r * r + i * i);
 }
 
 function
-urandom()
-{
+	urandom() {
 	return 4.0 * Math.random() - 2.0;
 }
 function
-eval_number(p1)
-{
+	eval_number(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = pop();
@@ -10022,23 +9674,20 @@ eval_number(p1)
 		push_integer(0);
 }
 function
-eval_numerator(p1)
-{
+	eval_numerator(p1) {
 	push(cadr(p1));
 	evalf();
 	numerator();
 }
 
 function
-numerator()
-{
+	numerator() {
 	numden();
 	swap();
 	pop(); // discard denominator
 }
 function
-eval_or(p1)
-{
+	eval_or(p1) {
 	var p2;
 	p1 = cdr(p1);
 	while (iscons(p1)) {
@@ -10054,8 +9703,7 @@ eval_or(p1)
 	push_integer(0);
 }
 function
-eval_outer(p1)
-{
+	eval_outer(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = cddr(p1);
@@ -10068,8 +9716,7 @@ eval_outer(p1)
 }
 
 function
-outer()
-{
+	outer() {
 	var i, j, k, n, ncol, nrow, p1, p2, p3;
 
 	p2 = pop();
@@ -10114,16 +9761,14 @@ outer()
 	push(p3);
 }
 function
-eval_polar(p1)
-{
+	eval_polar(p1) {
 	push(cadr(p1));
 	evalf();
 	polar();
 }
 
 function
-polar()
-{
+	polar() {
 	var i, n, p1, p2;
 
 	p1 = pop();
@@ -10160,8 +9805,7 @@ polar()
 	multiply();
 }
 function
-eval_power(p1)
-{
+	eval_power(p1) {
 	var t, p2;
 
 	expanding--;
@@ -10195,8 +9839,7 @@ eval_power(p1)
 }
 
 function
-power()
-{
+	power() {
 	var h, i, n, p1, BASE, EXPO;
 
 	EXPO = pop();
@@ -10384,8 +10027,7 @@ power()
 	list(3);
 }
 function
-eval_prefixform(p1)
-{
+	eval_prefixform(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = pop();
@@ -10394,8 +10036,7 @@ eval_prefixform(p1)
 	push_string(outbuf);
 }
 function
-eval_print(p1)
-{
+	eval_print(p1) {
 	p1 = cdr(p1);
 	while (iscons(p1)) {
 		push(car(p1));
@@ -10408,8 +10049,7 @@ eval_print(p1)
 }
 
 function
-print_result()
-{
+	print_result() {
 	var p1, p2;
 
 	p2 = pop(); // result
@@ -10438,8 +10078,7 @@ print_result()
 // returns 1 if result should be annotated
 
 function
-annotate_result(p1, p2)
-{
+	annotate_result(p1, p2) {
 	if (!isusersymbol(p1))
 		return 0;
 
@@ -10455,8 +10094,7 @@ annotate_result(p1, p2)
 	return 1;
 }
 function
-eval_product(p1)
-{
+	eval_product(p1) {
 	var h, i, j, k, n, p2, p3;
 
 	// product of tensor elements?
@@ -10502,7 +10140,7 @@ eval_product(p1)
 
 	h = stack.length;
 
-	for (;;) {
+	for (; ;) {
 		push_integer(j);
 		p3 = pop();
 		set_symbol(p2, p3, symbol(NIL));
@@ -10523,13 +10161,11 @@ eval_product(p1)
 	restore_symbol();
 }
 function
-eval_quote(p1)
-{
+	eval_quote(p1) {
 	push(cadr(p1)); // not evaluated
 }
 function
-eval_rank(p1)
-{
+	eval_rank(p1) {
 	push(cadr(p1));
 	evalf();
 	p1 = pop();
@@ -10539,16 +10175,14 @@ eval_rank(p1)
 		push_integer(0);
 }
 function
-eval_rationalize(p1)
-{
+	eval_rationalize(p1) {
 	push(cadr(p1));
 	evalf();
 	rationalize();
 }
 
 function
-rationalize()
-{
+	rationalize() {
 	var i, n, p1;
 
 	p1 = pop();
@@ -10572,16 +10206,14 @@ rationalize()
 	multiply_noexpand();
 }
 function
-eval_real(p1)
-{
+	eval_real(p1) {
 	push(cadr(p1));
 	evalf();
 	real();
 }
 
 function
-real()
-{
+	real() {
 	var i, n, p1;
 
 	p1 = pop();
@@ -10609,16 +10241,14 @@ real()
 	multiply();
 }
 function
-eval_rect(p1)
-{
+	eval_rect(p1) {
 	push(cadr(p1));
 	evalf();
 	rect();
 }
 
 function
-rect()
-{
+	rect() {
 	var h, i, n, p1, p2, BASE, EXPO;
 
 	p1 = pop();
@@ -10706,8 +10336,7 @@ rect()
 	multiply();
 }
 function
-eval_roots(p1)
-{
+	eval_roots(p1) {
 	push(cadr(p1));
 	evalf();
 
@@ -10723,8 +10352,7 @@ eval_roots(p1)
 }
 
 function
-roots()
-{
+	roots() {
 	var h, i, j, k, n;
 	var A, P, X;
 
@@ -10801,8 +10429,7 @@ roots()
 }
 
 function
-findroot(h, n)
-{
+	findroot(h, n) {
 	var i, j, m, p, q, r;
 	var A, C, PA;
 
@@ -10890,8 +10517,7 @@ findroot(h, n)
 // evaluate p(x) at x = A using horner's rule
 
 function
-horner(h, n, A)
-{
+	horner(h, n, A) {
 	var i;
 
 	push(stack[h + n - 1]);
@@ -10907,8 +10533,7 @@ horner(h, n, A)
 // push all divisors of n
 
 function
-divisors(n)
-{
+	divisors(n) {
 	var h, i, k;
 
 	h = stack.length;
@@ -10948,8 +10573,7 @@ divisors(n)
 //	1, 2, 3, 4, 6, 12
 
 function
-divisors_nib(h, k)
-{
+	divisors_nib(h, k) {
 	var i, n;
 	var ACCUM, BASE, EXPO;
 
@@ -10977,8 +10601,7 @@ divisors_nib(h, k)
 // divide by X - A
 
 function
-reduce(h, n, A)
-{
+	reduce(h, n, A) {
 	var i;
 
 	for (i = n - 1; i > 0; i--) {
@@ -10999,8 +10622,7 @@ reduce(h, n, A)
 		stack[h + i] = stack[h + i + 1];
 }
 function
-eval_rotate(p1)
-{
+	eval_rotate(p1) {
 	var m, n, c, PSI, OPCODE, PHASE;
 
 	push(cadr(p1));
@@ -11109,8 +10731,7 @@ eval_rotate(p1)
 // hadamard
 
 function
-rotate_h(PSI, c, n)
-{
+	rotate_h(PSI, c, n) {
 	var i;
 	n = 1 << n;
 	for (i = 0; i < PSI.elem.length; i++) {
@@ -11138,8 +10759,7 @@ rotate_h(PSI, c, n)
 // phase
 
 function
-rotate_p(PSI, PHASE, c, n)
-{
+	rotate_p(PSI, PHASE, c, n) {
 	var i;
 	n = 1 << n;
 	for (i = 0; i < PSI.elem.length; i++) {
@@ -11157,8 +10777,7 @@ rotate_p(PSI, PHASE, c, n)
 // swap
 
 function
-rotate_w(PSI, c, m, n)
-{
+	rotate_w(PSI, c, m, n) {
 	var i;
 	m = 1 << m;
 	n = 1 << n;
@@ -11175,8 +10794,7 @@ rotate_w(PSI, c, m, n)
 }
 
 function
-rotate_x(PSI, c, n)
-{
+	rotate_x(PSI, c, n) {
 	var i;
 	n = 1 << n;
 	for (i = 0; i < PSI.elem.length; i++) {
@@ -11192,8 +10810,7 @@ rotate_x(PSI, c, n)
 }
 
 function
-rotate_y(PSI, c, n)
-{
+	rotate_y(PSI, c, n) {
 	var i;
 	n = 1 << n;
 	for (i = 0; i < PSI.elem.length; i++) {
@@ -11214,8 +10831,7 @@ rotate_y(PSI, c, n)
 }
 
 function
-rotate_z(PSI, c, n)
-{
+	rotate_z(PSI, c, n) {
 	var i;
 	n = 1 << n;
 	for (i = 0; i < PSI.elem.length; i++) {
@@ -11232,8 +10848,7 @@ rotate_z(PSI, c, n)
 // quantum fourier transform
 
 function
-rotate_q(PSI, n)
-{
+	rotate_q(PSI, n) {
 	var i, j, PHASE;
 	for (i = n; i >= 0; i--) {
 		rotate_h(PSI, 0, i);
@@ -11257,8 +10872,7 @@ rotate_q(PSI, n)
 // inverse qft
 
 function
-rotate_v(PSI, n)
-{
+	rotate_v(PSI, n) {
 	var i, j, PHASE;
 	for (i = 0; i < (n + 1) / 2; i++)
 		rotate_w(PSI, 0, i, n - i);
@@ -11280,8 +10894,7 @@ rotate_v(PSI, n)
 	}
 }
 function
-eval_run(p1)
-{
+	eval_run(p1) {
 	var f, k, save_inbuf, save_trace1, save_trace2;
 
 	push(cadr(p1));
@@ -11293,7 +10906,7 @@ eval_run(p1)
 
 	f = new XMLHttpRequest();
 	f.open("GET", p1.string, false);
-	f.onerror = function() {stopf("run: network error")};
+	f.onerror = function () { stopf("run: network error") };
 	f.send();
 
 	if (f.status == 404 || f.responseText.length == 0)
@@ -11307,7 +10920,7 @@ eval_run(p1)
 
 	k = 0;
 
-	for (;;) {
+	for (; ;) {
 
 		k = scan_inbuf(k);
 
@@ -11324,8 +10937,7 @@ eval_run(p1)
 	push_symbol(NIL);
 }
 function
-eval_setq(p1)
-{
+	eval_setq(p1) {
 	var p2;
 
 	push_symbol(NIL); // return value
@@ -11363,8 +10975,7 @@ eval_setq(p1)
 // caddr(p1) = b
 
 function
-setq_indexed(p1)
-{
+	setq_indexed(p1) {
 	var h, LVAL, RVAL, S;
 
 	S = cadadr(p1);
@@ -11397,8 +11008,7 @@ setq_indexed(p1)
 }
 
 function
-set_component(LVAL, RVAL, h)
-{
+	set_component(LVAL, RVAL, h) {
 	var i, k, m, n, t;
 
 	if (!istensor(LVAL))
@@ -11469,8 +11079,7 @@ set_component(LVAL, RVAL, h)
 //	caddr(p1) points to (power x y)
 
 function
-setq_usrfunc(p1)
-{
+	setq_usrfunc(p1) {
 	var A, B, C, F;
 
 	F = caadr(p1); // function name
@@ -11491,8 +11100,7 @@ setq_usrfunc(p1)
 }
 
 function
-convert_body(A)
-{
+	convert_body(A) {
 	if (!iscons(A))
 		return;
 
@@ -11566,16 +11174,14 @@ convert_body(A)
 	subst();
 }
 function
-eval_sgn(p1)
-{
+	eval_sgn(p1) {
 	push(cadr(p1));
 	evalf();
 	sgn();
 }
 
 function
-sgn()
-{
+	sgn() {
 	var i, n, p1;
 
 	p1 = pop();
@@ -11610,16 +11216,14 @@ sgn()
 		push_integer(1);
 }
 function
-eval_simplify(p1)
-{
+	eval_simplify(p1) {
 	push(cadr(p1));
 	evalf();
 	simplify();
 }
 
 function
-simplify()
-{
+	simplify() {
 	var i, n;
 	var p1;
 
@@ -11643,8 +11247,7 @@ simplify()
 }
 
 function
-simplify_nib()
-{
+	simplify_nib() {
 	var h;
 	var p1, p2, p3, NUM, DEN, R;
 
@@ -11765,8 +11368,7 @@ simplify_nib()
 // try exponential form
 
 function
-simplify_trig()
-{
+	simplify_trig() {
 	var p1, p2;
 
 	p1 = pop();
@@ -11790,8 +11392,7 @@ simplify_trig()
 }
 
 function
-simpler(p1, p2)
-{
+	simpler(p1, p2) {
 	var d1, d2;
 
 	d1 = diameter(p1);
@@ -11808,8 +11409,7 @@ simpler(p1, p2)
 // for example, 1 / (x + y^2 / x) has diameter of 2
 
 function
-diameter(p)
-{
+	diameter(p) {
 	var max = 0, n;
 
 	if (car(p) == symbol(POWER) && isnegativenumber(caddr(p)))
@@ -11826,8 +11426,7 @@ diameter(p)
 }
 
 function
-mass(p)
-{
+	mass(p) {
 	var n = 1;
 	while (iscons(p)) {
 		n += mass(car(p));
@@ -11836,16 +11435,14 @@ mass(p)
 	return n;
 }
 function
-eval_sin(p1)
-{
+	eval_sin(p1) {
 	push(cadr(p1));
 	evalf();
 	sinfunc();
 }
 
 function
-sinfunc()
-{
+	sinfunc() {
 	var d, i, n, p1, p2, X, Y;
 
 	p1 = pop();
@@ -11977,69 +11574,68 @@ sinfunc()
 	n = pop_integer();
 
 	switch (n) {
-	case 0:
-	case 180:
-		push_integer(0);
-		break;
-	case 30:
-	case 150:
-		push_rational(1, 2);
-		break;
-	case 210:
-	case 330:
-		push_rational(-1, 2);
-		break;
-	case 45:
-	case 135:
-		push_rational(1, 2);
-		push_integer(2);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 225:
-	case 315:
-		push_rational(-1, 2);
-		push_integer(2);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 60:
-	case 120:
-		push_rational(1, 2);
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 240:
-	case 300:
-		push_rational(-1, 2);
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 90:
-		push_integer(1);
-		break;
-	case 270:
-		push_integer(-1);
-		break;
-	default:
-		push_symbol(SIN);
-		push(p1);
-		list(2);
-		break;
+		case 0:
+		case 180:
+			push_integer(0);
+			break;
+		case 30:
+		case 150:
+			push_rational(1, 2);
+			break;
+		case 210:
+		case 330:
+			push_rational(-1, 2);
+			break;
+		case 45:
+		case 135:
+			push_rational(1, 2);
+			push_integer(2);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 225:
+		case 315:
+			push_rational(-1, 2);
+			push_integer(2);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 60:
+		case 120:
+			push_rational(1, 2);
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 240:
+		case 300:
+			push_rational(-1, 2);
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 90:
+			push_integer(1);
+			break;
+		case 270:
+			push_integer(-1);
+			break;
+		default:
+			push_symbol(SIN);
+			push(p1);
+			list(2);
+			break;
 	}
 }
 
 // sin(x + n/2 pi) = sin(x) cos(n/2 pi) + cos(x) sin(n/2 pi)
 
 function
-sinfunc_sum(p1)
-{
+	sinfunc_sum(p1) {
 	var p2, p3;
 	p2 = cdr(p1);
 	while (iscons(p2)) {
@@ -12074,16 +11670,14 @@ sinfunc_sum(p1)
 	list(2);
 }
 function
-eval_sinh(p1)
-{
+	eval_sinh(p1) {
 	push(cadr(p1));
 	evalf();
 	sinhfunc();
 }
 
 function
-sinhfunc()
-{
+	sinhfunc() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -12147,32 +11741,27 @@ sinhfunc()
 	list(2);
 }
 function
-eval_sqrt(p1)
-{
+	eval_sqrt(p1) {
 	push(cadr(p1));
 	evalf();
 	sqrtfunc();
 }
 
 function
-sqrtfunc()
-{
+	sqrtfunc() {
 	push_rational(1, 2);
 	power();
 }
 function
-eval_status()
-{
+	eval_status() {
 	push_symbol(NIL);
 }
 function
-eval_stop()
-{
+	eval_stop() {
 	stopf("stop");
 }
 function
-eval_subst(p1)
-{
+	eval_subst(p1) {
 	push(cadddr(p1));
 	evalf();
 	push(caddr(p1));
@@ -12186,8 +11775,7 @@ eval_subst(p1)
 // cannot do any evalf in subst because subst is used by func defn
 
 function
-subst()
-{
+	subst() {
 	var h, i, n, p1, p2, p3;
 
 	p3 = pop(); // new expr
@@ -12238,8 +11826,7 @@ subst()
 	list(stack.length - h);
 }
 function
-eval_sum(p1)
-{
+	eval_sum(p1) {
 	var h, i, j, k, n, p2, p3;
 
 	// sum over tensor elements?
@@ -12285,7 +11872,7 @@ eval_sum(p1)
 
 	h = stack.length;
 
-	for (;;) {
+	for (; ;) {
 		push_integer(j);
 		p3 = pop();
 		set_symbol(p2, p3, symbol(NIL));
@@ -12306,16 +11893,14 @@ eval_sum(p1)
 	restore_symbol();
 }
 function
-eval_tan(p1)
-{
+	eval_tan(p1) {
 	push(cadr(p1));
 	evalf();
 	tanfunc();
 }
 
 function
-tanfunc()
-{
+	tanfunc() {
 	var d, i, n, p1, p2;
 
 	p1 = pop();
@@ -12411,60 +11996,59 @@ tanfunc()
 	n = pop_integer();
 
 	switch (n) {
-	case 0:
-	case 180:
-		push_integer(0);
-		break;
-	case 30:
-	case 210:
-		push_rational(1, 3);
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 150:
-	case 330:
-		push_rational(-1, 3);
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		multiply();
-		break;
-	case 45:
-	case 225:
-		push_integer(1);
-		break;
-	case 135:
-	case 315:
-		push_integer(-1);
-		break;
-	case 60:
-	case 240:
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		break;
-	case 120:
-	case 300:
-		push_integer(3);
-		push_rational(1, 2);
-		power();
-		negate();
-		break;
-	default:
-		push_symbol(TAN);
-		push(p1);
-		list(2);
-		break;
+		case 0:
+		case 180:
+			push_integer(0);
+			break;
+		case 30:
+		case 210:
+			push_rational(1, 3);
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 150:
+		case 330:
+			push_rational(-1, 3);
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			multiply();
+			break;
+		case 45:
+		case 225:
+			push_integer(1);
+			break;
+		case 135:
+		case 315:
+			push_integer(-1);
+			break;
+		case 60:
+		case 240:
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			break;
+		case 120:
+		case 300:
+			push_integer(3);
+			push_rational(1, 2);
+			power();
+			negate();
+			break;
+		default:
+			push_symbol(TAN);
+			push(p1);
+			list(2);
+			break;
 	}
 }
 
 // tan(x + n pi) = tan(x)
 
 function
-tanfunc_sum(p1)
-{
+	tanfunc_sum(p1) {
 	var p2, p3;
 	p2 = cdr(p1);
 	while (iscons(p2)) {
@@ -12486,16 +12070,14 @@ tanfunc_sum(p1)
 	list(2);
 }
 function
-eval_tanh(p1)
-{
+	eval_tanh(p1) {
 	push(cadr(p1));
 	evalf();
 	tanhfunc();
 }
 
 function
-tanhfunc()
-{
+	tanhfunc() {
 	var d, i, n, p1;
 
 	p1 = pop();
@@ -12554,8 +12136,7 @@ tanhfunc()
 	list(2);
 }
 function
-eval_taylor(p1)
-{
+	eval_taylor(p1) {
 	var h, i, n, F, X, A, C;
 
 	push(cadr(p1));
@@ -12627,8 +12208,7 @@ eval_taylor(p1)
 	add_terms(stack.length - h);
 }
 function
-eval_tensor(p1)
-{
+	eval_tensor(p1) {
 	var i, n;
 
 	p1 = copy_tensor(p1);
@@ -12646,8 +12226,7 @@ eval_tensor(p1)
 	promote_tensor();
 }
 function
-eval_test(p1)
-{
+	eval_test(p1) {
 	var p2;
 	p1 = cdr(p1);
 	while (iscons(p1)) {
@@ -12670,8 +12249,7 @@ eval_test(p1)
 }
 
 function
-eval_testeq(p1)
-{
+	eval_testeq(p1) {
 	push(cadr(p1));
 	evalf();
 	push(caddr(p1));
@@ -12686,8 +12264,7 @@ eval_testeq(p1)
 }
 
 function
-eval_testge(p1)
-{
+	eval_testge(p1) {
 	if (cmp_args(p1) >= 0)
 		push_integer(1);
 	else
@@ -12695,8 +12272,7 @@ eval_testge(p1)
 }
 
 function
-eval_testgt(p1)
-{
+	eval_testgt(p1) {
 	if (cmp_args(p1) > 0)
 		push_integer(1);
 	else
@@ -12704,8 +12280,7 @@ eval_testgt(p1)
 }
 
 function
-eval_testle(p1)
-{
+	eval_testle(p1) {
 	if (cmp_args(p1) <= 0)
 		push_integer(1);
 	else
@@ -12713,8 +12288,7 @@ eval_testle(p1)
 }
 
 function
-eval_testlt(p1)
-{
+	eval_testlt(p1) {
 	if (cmp_args(p1) < 0)
 		push_integer(1);
 	else
@@ -12722,8 +12296,7 @@ eval_testlt(p1)
 }
 
 function
-cmp_args(p1)
-{
+	cmp_args(p1) {
 	push(cadr(p1));
 	evalf();
 	push(caddr(p1));
@@ -12741,8 +12314,7 @@ cmp_args(p1)
 		return 1;
 }
 function
-eval_transpose(p1)
-{
+	eval_transpose(p1) {
 	var m, n;
 	var p2;
 
@@ -12778,8 +12350,7 @@ eval_transpose(p1)
 }
 
 function
-transpose(n, m)
-{
+	transpose(n, m) {
 	var i, j, k, ndim, nelem;
 	var index = [];
 	var p1, p2;
@@ -12832,8 +12403,7 @@ transpose(n, m)
 	push(p2);
 }
 function
-eval_unit(p1)
-{
+	eval_unit(p1) {
 	var i, j, n;
 
 	push(cadr(p1));
@@ -12861,8 +12431,7 @@ eval_unit(p1)
 	push(p1);
 }
 function
-eval_user_function(p1)
-{
+	eval_user_function(p1) {
 	var h, i, FUNC_NAME, FUNC_ARGS, FUNC_DEFN;
 
 	FUNC_NAME = car(p1);
@@ -12933,8 +12502,7 @@ eval_user_function(p1)
 	restore_symbol();
 }
 function
-eval_user_symbol(p1)
-{
+	eval_user_symbol(p1) {
 	var p2;
 	p2 = get_binding(p1);
 	if (p1 == p2)
@@ -12945,8 +12513,7 @@ eval_user_symbol(p1)
 	}
 }
 function
-eval_zero(p1)
-{
+	eval_zero(p1) {
 	var h, i, m, n;
 
 	p1 = cdr(p1);
@@ -12984,16 +12551,14 @@ eval_zero(p1)
 	push(p1);
 }
 function
-evalf()
-{
+	evalf() {
 	eval_level++;
 	evalf_nib();
 	eval_level--;
 }
 
 function
-evalf_nib()
-{
+	evalf_nib() {
 	var p1;
 
 	if (eval_level == 200)
@@ -13034,8 +12599,7 @@ evalf_nib()
 	push(p1); // rational, double, or string
 }
 function
-evalp()
-{
+	evalp() {
 	var p1 = pop();
 	if (car(p1) == symbol(SETQ))
 		eval_testeq(p1);
@@ -13047,8 +12611,7 @@ evalp()
 // N is bignum, M is rational
 
 function
-factor_bignum(N, M)
-{
+	factor_bignum(N, M) {
 	var h, i, n;
 	var BASE, EXPO;
 
@@ -13100,8 +12663,7 @@ factor_bignum(N, M)
 // factors N or N^M where N and M are rational numbers, returns factors on stack
 
 function
-factor_factor()
-{
+	factor_factor() {
 	var numer, denom;
 	var INPUT, BASE, EXPO;
 
@@ -13164,610 +12726,609 @@ factor_factor()
 		factor_bignum(denom, minusone);
 }
 var primetab = [
-2,3,5,7,11,13,17,19,
-23,29,31,37,41,43,47,53,
-59,61,67,71,73,79,83,89,
-97,101,103,107,109,113,127,131,
-137,139,149,151,157,163,167,173,
-179,181,191,193,197,199,211,223,
-227,229,233,239,241,251,257,263,
-269,271,277,281,283,293,307,311,
-313,317,331,337,347,349,353,359,
-367,373,379,383,389,397,401,409,
-419,421,431,433,439,443,449,457,
-461,463,467,479,487,491,499,503,
-509,521,523,541,547,557,563,569,
-571,577,587,593,599,601,607,613,
-617,619,631,641,643,647,653,659,
-661,673,677,683,691,701,709,719,
-727,733,739,743,751,757,761,769,
-773,787,797,809,811,821,823,827,
-829,839,853,857,859,863,877,881,
-883,887,907,911,919,929,937,941,
-947,953,967,971,977,983,991,997,
-1009,1013,1019,1021,1031,1033,1039,1049,
-1051,1061,1063,1069,1087,1091,1093,1097,
-1103,1109,1117,1123,1129,1151,1153,1163,
-1171,1181,1187,1193,1201,1213,1217,1223,
-1229,1231,1237,1249,1259,1277,1279,1283,
-1289,1291,1297,1301,1303,1307,1319,1321,
-1327,1361,1367,1373,1381,1399,1409,1423,
-1427,1429,1433,1439,1447,1451,1453,1459,
-1471,1481,1483,1487,1489,1493,1499,1511,
-1523,1531,1543,1549,1553,1559,1567,1571,
-1579,1583,1597,1601,1607,1609,1613,1619,
-1621,1627,1637,1657,1663,1667,1669,1693,
-1697,1699,1709,1721,1723,1733,1741,1747,
-1753,1759,1777,1783,1787,1789,1801,1811,
-1823,1831,1847,1861,1867,1871,1873,1877,
-1879,1889,1901,1907,1913,1931,1933,1949,
-1951,1973,1979,1987,1993,1997,1999,2003,
-2011,2017,2027,2029,2039,2053,2063,2069,
-2081,2083,2087,2089,2099,2111,2113,2129,
-2131,2137,2141,2143,2153,2161,2179,2203,
-2207,2213,2221,2237,2239,2243,2251,2267,
-2269,2273,2281,2287,2293,2297,2309,2311,
-2333,2339,2341,2347,2351,2357,2371,2377,
-2381,2383,2389,2393,2399,2411,2417,2423,
-2437,2441,2447,2459,2467,2473,2477,2503,
-2521,2531,2539,2543,2549,2551,2557,2579,
-2591,2593,2609,2617,2621,2633,2647,2657,
-2659,2663,2671,2677,2683,2687,2689,2693,
-2699,2707,2711,2713,2719,2729,2731,2741,
-2749,2753,2767,2777,2789,2791,2797,2801,
-2803,2819,2833,2837,2843,2851,2857,2861,
-2879,2887,2897,2903,2909,2917,2927,2939,
-2953,2957,2963,2969,2971,2999,3001,3011,
-3019,3023,3037,3041,3049,3061,3067,3079,
-3083,3089,3109,3119,3121,3137,3163,3167,
-3169,3181,3187,3191,3203,3209,3217,3221,
-3229,3251,3253,3257,3259,3271,3299,3301,
-3307,3313,3319,3323,3329,3331,3343,3347,
-3359,3361,3371,3373,3389,3391,3407,3413,
-3433,3449,3457,3461,3463,3467,3469,3491,
-3499,3511,3517,3527,3529,3533,3539,3541,
-3547,3557,3559,3571,3581,3583,3593,3607,
-3613,3617,3623,3631,3637,3643,3659,3671,
-3673,3677,3691,3697,3701,3709,3719,3727,
-3733,3739,3761,3767,3769,3779,3793,3797,
-3803,3821,3823,3833,3847,3851,3853,3863,
-3877,3881,3889,3907,3911,3917,3919,3923,
-3929,3931,3943,3947,3967,3989,4001,4003,
-4007,4013,4019,4021,4027,4049,4051,4057,
-4073,4079,4091,4093,4099,4111,4127,4129,
-4133,4139,4153,4157,4159,4177,4201,4211,
-4217,4219,4229,4231,4241,4243,4253,4259,
-4261,4271,4273,4283,4289,4297,4327,4337,
-4339,4349,4357,4363,4373,4391,4397,4409,
-4421,4423,4441,4447,4451,4457,4463,4481,
-4483,4493,4507,4513,4517,4519,4523,4547,
-4549,4561,4567,4583,4591,4597,4603,4621,
-4637,4639,4643,4649,4651,4657,4663,4673,
-4679,4691,4703,4721,4723,4729,4733,4751,
-4759,4783,4787,4789,4793,4799,4801,4813,
-4817,4831,4861,4871,4877,4889,4903,4909,
-4919,4931,4933,4937,4943,4951,4957,4967,
-4969,4973,4987,4993,4999,5003,5009,5011,
-5021,5023,5039,5051,5059,5077,5081,5087,
-5099,5101,5107,5113,5119,5147,5153,5167,
-5171,5179,5189,5197,5209,5227,5231,5233,
-5237,5261,5273,5279,5281,5297,5303,5309,
-5323,5333,5347,5351,5381,5387,5393,5399,
-5407,5413,5417,5419,5431,5437,5441,5443,
-5449,5471,5477,5479,5483,5501,5503,5507,
-5519,5521,5527,5531,5557,5563,5569,5573,
-5581,5591,5623,5639,5641,5647,5651,5653,
-5657,5659,5669,5683,5689,5693,5701,5711,
-5717,5737,5741,5743,5749,5779,5783,5791,
-5801,5807,5813,5821,5827,5839,5843,5849,
-5851,5857,5861,5867,5869,5879,5881,5897,
-5903,5923,5927,5939,5953,5981,5987,6007,
-6011,6029,6037,6043,6047,6053,6067,6073,
-6079,6089,6091,6101,6113,6121,6131,6133,
-6143,6151,6163,6173,6197,6199,6203,6211,
-6217,6221,6229,6247,6257,6263,6269,6271,
-6277,6287,6299,6301,6311,6317,6323,6329,
-6337,6343,6353,6359,6361,6367,6373,6379,
-6389,6397,6421,6427,6449,6451,6469,6473,
-6481,6491,6521,6529,6547,6551,6553,6563,
-6569,6571,6577,6581,6599,6607,6619,6637,
-6653,6659,6661,6673,6679,6689,6691,6701,
-6703,6709,6719,6733,6737,6761,6763,6779,
-6781,6791,6793,6803,6823,6827,6829,6833,
-6841,6857,6863,6869,6871,6883,6899,6907,
-6911,6917,6947,6949,6959,6961,6967,6971,
-6977,6983,6991,6997,7001,7013,7019,7027,
-7039,7043,7057,7069,7079,7103,7109,7121,
-7127,7129,7151,7159,7177,7187,7193,7207,
-7211,7213,7219,7229,7237,7243,7247,7253,
-7283,7297,7307,7309,7321,7331,7333,7349,
-7351,7369,7393,7411,7417,7433,7451,7457,
-7459,7477,7481,7487,7489,7499,7507,7517,
-7523,7529,7537,7541,7547,7549,7559,7561,
-7573,7577,7583,7589,7591,7603,7607,7621,
-7639,7643,7649,7669,7673,7681,7687,7691,
-7699,7703,7717,7723,7727,7741,7753,7757,
-7759,7789,7793,7817,7823,7829,7841,7853,
-7867,7873,7877,7879,7883,7901,7907,7919,
-7927,7933,7937,7949,7951,7963,7993,8009,
-8011,8017,8039,8053,8059,8069,8081,8087,
-8089,8093,8101,8111,8117,8123,8147,8161,
-8167,8171,8179,8191,8209,8219,8221,8231,
-8233,8237,8243,8263,8269,8273,8287,8291,
-8293,8297,8311,8317,8329,8353,8363,8369,
-8377,8387,8389,8419,8423,8429,8431,8443,
-8447,8461,8467,8501,8513,8521,8527,8537,
-8539,8543,8563,8573,8581,8597,8599,8609,
-8623,8627,8629,8641,8647,8663,8669,8677,
-8681,8689,8693,8699,8707,8713,8719,8731,
-8737,8741,8747,8753,8761,8779,8783,8803,
-8807,8819,8821,8831,8837,8839,8849,8861,
-8863,8867,8887,8893,8923,8929,8933,8941,
-8951,8963,8969,8971,8999,9001,9007,9011,
-9013,9029,9041,9043,9049,9059,9067,9091,
-9103,9109,9127,9133,9137,9151,9157,9161,
-9173,9181,9187,9199,9203,9209,9221,9227,
-9239,9241,9257,9277,9281,9283,9293,9311,
-9319,9323,9337,9341,9343,9349,9371,9377,
-9391,9397,9403,9413,9419,9421,9431,9433,
-9437,9439,9461,9463,9467,9473,9479,9491,
-9497,9511,9521,9533,9539,9547,9551,9587,
-9601,9613,9619,9623,9629,9631,9643,9649,
-9661,9677,9679,9689,9697,9719,9721,9733,
-9739,9743,9749,9767,9769,9781,9787,9791,
-9803,9811,9817,9829,9833,9839,9851,9857,
-9859,9871,9883,9887,9901,9907,9923,9929,
-9931,9941,9949,9967,9973,10007,10009,10037,
-10039,10061,10067,10069,10079,10091,10093,10099,
-10103,10111,10133,10139,10141,10151,10159,10163,
-10169,10177,10181,10193,10211,10223,10243,10247,
-10253,10259,10267,10271,10273,10289,10301,10303,
-10313,10321,10331,10333,10337,10343,10357,10369,
-10391,10399,10427,10429,10433,10453,10457,10459,
-10463,10477,10487,10499,10501,10513,10529,10531,
-10559,10567,10589,10597,10601,10607,10613,10627,
-10631,10639,10651,10657,10663,10667,10687,10691,
-10709,10711,10723,10729,10733,10739,10753,10771,
-10781,10789,10799,10831,10837,10847,10853,10859,
-10861,10867,10883,10889,10891,10903,10909,10937,
-10939,10949,10957,10973,10979,10987,10993,11003,
-11027,11047,11057,11059,11069,11071,11083,11087,
-11093,11113,11117,11119,11131,11149,11159,11161,
-11171,11173,11177,11197,11213,11239,11243,11251,
-11257,11261,11273,11279,11287,11299,11311,11317,
-11321,11329,11351,11353,11369,11383,11393,11399,
-11411,11423,11437,11443,11447,11467,11471,11483,
-11489,11491,11497,11503,11519,11527,11549,11551,
-11579,11587,11593,11597,11617,11621,11633,11657,
-11677,11681,11689,11699,11701,11717,11719,11731,
-11743,11777,11779,11783,11789,11801,11807,11813,
-11821,11827,11831,11833,11839,11863,11867,11887,
-11897,11903,11909,11923,11927,11933,11939,11941,
-11953,11959,11969,11971,11981,11987,12007,12011,
-12037,12041,12043,12049,12071,12073,12097,12101,
-12107,12109,12113,12119,12143,12149,12157,12161,
-12163,12197,12203,12211,12227,12239,12241,12251,
-12253,12263,12269,12277,12281,12289,12301,12323,
-12329,12343,12347,12373,12377,12379,12391,12401,
-12409,12413,12421,12433,12437,12451,12457,12473,
-12479,12487,12491,12497,12503,12511,12517,12527,
-12539,12541,12547,12553,12569,12577,12583,12589,
-12601,12611,12613,12619,12637,12641,12647,12653,
-12659,12671,12689,12697,12703,12713,12721,12739,
-12743,12757,12763,12781,12791,12799,12809,12821,
-12823,12829,12841,12853,12889,12893,12899,12907,
-12911,12917,12919,12923,12941,12953,12959,12967,
-12973,12979,12983,13001,13003,13007,13009,13033,
-13037,13043,13049,13063,13093,13099,13103,13109,
-13121,13127,13147,13151,13159,13163,13171,13177,
-13183,13187,13217,13219,13229,13241,13249,13259,
-13267,13291,13297,13309,13313,13327,13331,13337,
-13339,13367,13381,13397,13399,13411,13417,13421,
-13441,13451,13457,13463,13469,13477,13487,13499,
-13513,13523,13537,13553,13567,13577,13591,13597,
-13613,13619,13627,13633,13649,13669,13679,13681,
-13687,13691,13693,13697,13709,13711,13721,13723,
-13729,13751,13757,13759,13763,13781,13789,13799,
-13807,13829,13831,13841,13859,13873,13877,13879,
-13883,13901,13903,13907,13913,13921,13931,13933,
-13963,13967,13997,13999,14009,14011,14029,14033,
-14051,14057,14071,14081,14083,14087,14107,14143,
-14149,14153,14159,14173,14177,14197,14207,14221,
-14243,14249,14251,14281,14293,14303,14321,14323,
-14327,14341,14347,14369,14387,14389,14401,14407,
-14411,14419,14423,14431,14437,14447,14449,14461,
-14479,14489,14503,14519,14533,14537,14543,14549,
-14551,14557,14561,14563,14591,14593,14621,14627,
-14629,14633,14639,14653,14657,14669,14683,14699,
-14713,14717,14723,14731,14737,14741,14747,14753,
-14759,14767,14771,14779,14783,14797,14813,14821,
-14827,14831,14843,14851,14867,14869,14879,14887,
-14891,14897,14923,14929,14939,14947,14951,14957,
-14969,14983,15013,15017,15031,15053,15061,15073,
-15077,15083,15091,15101,15107,15121,15131,15137,
-15139,15149,15161,15173,15187,15193,15199,15217,
-15227,15233,15241,15259,15263,15269,15271,15277,
-15287,15289,15299,15307,15313,15319,15329,15331,
-15349,15359,15361,15373,15377,15383,15391,15401,
-15413,15427,15439,15443,15451,15461,15467,15473,
-15493,15497,15511,15527,15541,15551,15559,15569,
-15581,15583,15601,15607,15619,15629,15641,15643,
-15647,15649,15661,15667,15671,15679,15683,15727,
-15731,15733,15737,15739,15749,15761,15767,15773,
-15787,15791,15797,15803,15809,15817,15823,15859,
-15877,15881,15887,15889,15901,15907,15913,15919,
-15923,15937,15959,15971,15973,15991,16001,16007,
-16033,16057,16061,16063,16067,16069,16073,16087,
-16091,16097,16103,16111,16127,16139,16141,16183,
-16187,16189,16193,16217,16223,16229,16231,16249,
-16253,16267,16273,16301,16319,16333,16339,16349,
-16361,16363,16369,16381,16411,16417,16421,16427,
-16433,16447,16451,16453,16477,16481,16487,16493,
-16519,16529,16547,16553,16561,16567,16573,16603,
-16607,16619,16631,16633,16649,16651,16657,16661,
-16673,16691,16693,16699,16703,16729,16741,16747,
-16759,16763,16787,16811,16823,16829,16831,16843,
-16871,16879,16883,16889,16901,16903,16921,16927,
-16931,16937,16943,16963,16979,16981,16987,16993,
-17011,17021,17027,17029,17033,17041,17047,17053,
-17077,17093,17099,17107,17117,17123,17137,17159,
-17167,17183,17189,17191,17203,17207,17209,17231,
-17239,17257,17291,17293,17299,17317,17321,17327,
-17333,17341,17351,17359,17377,17383,17387,17389,
-17393,17401,17417,17419,17431,17443,17449,17467,
-17471,17477,17483,17489,17491,17497,17509,17519,
-17539,17551,17569,17573,17579,17581,17597,17599,
-17609,17623,17627,17657,17659,17669,17681,17683,
-17707,17713,17729,17737,17747,17749,17761,17783,
-17789,17791,17807,17827,17837,17839,17851,17863,
-17881,17891,17903,17909,17911,17921,17923,17929,
-17939,17957,17959,17971,17977,17981,17987,17989,
-18013,18041,18043,18047,18049,18059,18061,18077,
-18089,18097,18119,18121,18127,18131,18133,18143,
-18149,18169,18181,18191,18199,18211,18217,18223,
-18229,18233,18251,18253,18257,18269,18287,18289,
-18301,18307,18311,18313,18329,18341,18353,18367,
-18371,18379,18397,18401,18413,18427,18433,18439,
-18443,18451,18457,18461,18481,18493,18503,18517,
-18521,18523,18539,18541,18553,18583,18587,18593,
-18617,18637,18661,18671,18679,18691,18701,18713,
-18719,18731,18743,18749,18757,18773,18787,18793,
-18797,18803,18839,18859,18869,18899,18911,18913,
-18917,18919,18947,18959,18973,18979,19001,19009,
-19013,19031,19037,19051,19069,19073,19079,19081,
-19087,19121,19139,19141,19157,19163,19181,19183,
-19207,19211,19213,19219,19231,19237,19249,19259,
-19267,19273,19289,19301,19309,19319,19333,19373,
-19379,19381,19387,19391,19403,19417,19421,19423,
-19427,19429,19433,19441,19447,19457,19463,19469,
-19471,19477,19483,19489,19501,19507,19531,19541,
-19543,19553,19559,19571,19577,19583,19597,19603,
-19609,19661,19681,19687,19697,19699,19709,19717,
-19727,19739,19751,19753,19759,19763,19777,19793,
-19801,19813,19819,19841,19843,19853,19861,19867,
-19889,19891,19913,19919,19927,19937,19949,19961,
-19963,19973,19979,19991,19993,19997,20011,20021,
-20023,20029,20047,20051,20063,20071,20089,20101,
-20107,20113,20117,20123,20129,20143,20147,20149,
-20161,20173,20177,20183,20201,20219,20231,20233,
-20249,20261,20269,20287,20297,20323,20327,20333,
-20341,20347,20353,20357,20359,20369,20389,20393,
-20399,20407,20411,20431,20441,20443,20477,20479,
-20483,20507,20509,20521,20533,20543,20549,20551,
-20563,20593,20599,20611,20627,20639,20641,20663,
-20681,20693,20707,20717,20719,20731,20743,20747,
-20749,20753,20759,20771,20773,20789,20807,20809,
-20849,20857,20873,20879,20887,20897,20899,20903,
-20921,20929,20939,20947,20959,20963,20981,20983,
-21001,21011,21013,21017,21019,21023,21031,21059,
-21061,21067,21089,21101,21107,21121,21139,21143,
-21149,21157,21163,21169,21179,21187,21191,21193,
-21211,21221,21227,21247,21269,21277,21283,21313,
-21317,21319,21323,21341,21347,21377,21379,21383,
-21391,21397,21401,21407,21419,21433,21467,21481,
-21487,21491,21493,21499,21503,21517,21521,21523,
-21529,21557,21559,21563,21569,21577,21587,21589,
-21599,21601,21611,21613,21617,21647,21649,21661,
-21673,21683,21701,21713,21727,21737,21739,21751,
-21757,21767,21773,21787,21799,21803,21817,21821,
-21839,21841,21851,21859,21863,21871,21881,21893,
-21911,21929,21937,21943,21961,21977,21991,21997,
-22003,22013,22027,22031,22037,22039,22051,22063,
-22067,22073,22079,22091,22093,22109,22111,22123,
-22129,22133,22147,22153,22157,22159,22171,22189,
-22193,22229,22247,22259,22271,22273,22277,22279,
-22283,22291,22303,22307,22343,22349,22367,22369,
-22381,22391,22397,22409,22433,22441,22447,22453,
-22469,22481,22483,22501,22511,22531,22541,22543,
-22549,22567,22571,22573,22613,22619,22621,22637,
-22639,22643,22651,22669,22679,22691,22697,22699,
-22709,22717,22721,22727,22739,22741,22751,22769,
-22777,22783,22787,22807,22811,22817,22853,22859,
-22861,22871,22877,22901,22907,22921,22937,22943,
-22961,22963,22973,22993,23003,23011,23017,23021,
-23027,23029,23039,23041,23053,23057,23059,23063,
-23071,23081,23087,23099,23117,23131,23143,23159,
-23167,23173,23189,23197,23201,23203,23209,23227,
-23251,23269,23279,23291,23293,23297,23311,23321,
-23327,23333,23339,23357,23369,23371,23399,23417,
-23431,23447,23459,23473,23497,23509,23531,23537,
-23539,23549,23557,23561,23563,23567,23581,23593,
-23599,23603,23609,23623,23627,23629,23633,23663,
-23669,23671,23677,23687,23689,23719,23741,23743,
-23747,23753,23761,23767,23773,23789,23801,23813,
-23819,23827,23831,23833,23857,23869,23873,23879,
-23887,23893,23899,23909,23911,23917,23929,23957,
-23971,23977,23981,23993,24001,24007,24019,24023,
-24029,24043,24049,24061,24071,24077,24083,24091,
-24097,24103,24107,24109,24113,24121,24133,24137,
-24151,24169,24179,24181,24197,24203,24223,24229,
-24239,24247,24251,24281,24317,24329,24337,24359,
-24371,24373,24379,24391,24407,24413,24419,24421,
-24439,24443,24469,24473,24481,24499,24509,24517,
-24527,24533,24547,24551,24571,24593,24611,24623,
-24631,24659,24671,24677,24683,24691,24697,24709,
-24733,24749,24763,24767,24781,24793,24799,24809,
-24821,24841,24847,24851,24859,24877,24889,24907,
-24917,24919,24923,24943,24953,24967,24971,24977,
-24979,24989,25013,25031,25033,25037,25057,25073,
-25087,25097,25111,25117,25121,25127,25147,25153,
-25163,25169,25171,25183,25189,25219,25229,25237,
-25243,25247,25253,25261,25301,25303,25307,25309,
-25321,25339,25343,25349,25357,25367,25373,25391,
-25409,25411,25423,25439,25447,25453,25457,25463,
-25469,25471,25523,25537,25541,25561,25577,25579,
-25583,25589,25601,25603,25609,25621,25633,25639,
-25643,25657,25667,25673,25679,25693,25703,25717,
-25733,25741,25747,25759,25763,25771,25793,25799,
-25801,25819,25841,25847,25849,25867,25873,25889,
-25903,25913,25919,25931,25933,25939,25943,25951,
-25969,25981,25997,25999,26003,26017,26021,26029,
-26041,26053,26083,26099,26107,26111,26113,26119,
-26141,26153,26161,26171,26177,26183,26189,26203,
-26209,26227,26237,26249,26251,26261,26263,26267,
-26293,26297,26309,26317,26321,26339,26347,26357,
-26371,26387,26393,26399,26407,26417,26423,26431,
-26437,26449,26459,26479,26489,26497,26501,26513,
-26539,26557,26561,26573,26591,26597,26627,26633,
-26641,26647,26669,26681,26683,26687,26693,26699,
-26701,26711,26713,26717,26723,26729,26731,26737,
-26759,26777,26783,26801,26813,26821,26833,26839,
-26849,26861,26863,26879,26881,26891,26893,26903,
-26921,26927,26947,26951,26953,26959,26981,26987,
-26993,27011,27017,27031,27043,27059,27061,27067,
-27073,27077,27091,27103,27107,27109,27127,27143,
-27179,27191,27197,27211,27239,27241,27253,27259,
-27271,27277,27281,27283,27299,27329,27337,27361,
-27367,27397,27407,27409,27427,27431,27437,27449,
-27457,27479,27481,27487,27509,27527,27529,27539,
-27541,27551,27581,27583,27611,27617,27631,27647,
-27653,27673,27689,27691,27697,27701,27733,27737,
-27739,27743,27749,27751,27763,27767,27773,27779,
-27791,27793,27799,27803,27809,27817,27823,27827,
-27847,27851,27883,27893,27901,27917,27919,27941,
-27943,27947,27953,27961,27967,27983,27997,28001,
-28019,28027,28031,28051,28057,28069,28081,28087,
-28097,28099,28109,28111,28123,28151,28163,28181,
-28183,28201,28211,28219,28229,28277,28279,28283,
-28289,28297,28307,28309,28319,28349,28351,28387,
-28393,28403,28409,28411,28429,28433,28439,28447,
-28463,28477,28493,28499,28513,28517,28537,28541,
-28547,28549,28559,28571,28573,28579,28591,28597,
-28603,28607,28619,28621,28627,28631,28643,28649,
-28657,28661,28663,28669,28687,28697,28703,28711,
-28723,28729,28751,28753,28759,28771,28789,28793,
-28807,28813,28817,28837,28843,28859,28867,28871,
-28879,28901,28909,28921,28927,28933,28949,28961,
-28979,29009,29017,29021,29023,29027,29033,29059,
-29063,29077,29101,29123,29129,29131,29137,29147,
-29153,29167,29173,29179,29191,29201,29207,29209,
-29221,29231,29243,29251,29269,29287,29297,29303,
-29311,29327,29333,29339,29347,29363,29383,29387,
-29389,29399,29401,29411,29423,29429,29437,29443,
-29453,29473,29483,29501,29527,29531,29537,29567,
-29569,29573,29581,29587,29599,29611,29629,29633,
-29641,29663,29669,29671,29683,29717,29723,29741,
-29753,29759,29761,29789,29803,29819,29833,29837,
-29851,29863,29867,29873,29879,29881,29917,29921,
-29927,29947,29959,29983,29989,30011,30013,30029,
-30047,30059,30071,30089,30091,30097,30103,30109,
-30113,30119,30133,30137,30139,30161,30169,30181,
-30187,30197,30203,30211,30223,30241,30253,30259,
-30269,30271,30293,30307,30313,30319,30323,30341,
-30347,30367,30389,30391,30403,30427,30431,30449,
-30467,30469,30491,30493,30497,30509,30517,30529,
-30539,30553,30557,30559,30577,30593,30631,30637,
-30643,30649,30661,30671,30677,30689,30697,30703,
-30707,30713,30727,30757,30763,30773,30781,30803,
-30809,30817,30829,30839,30841,30851,30853,30859,
-30869,30871,30881,30893,30911,30931,30937,30941,
-30949,30971,30977,30983,31013,31019,31033,31039,
-31051,31063,31069,31079,31081,31091,31121,31123,
-31139,31147,31151,31153,31159,31177,31181,31183,
-31189,31193,31219,31223,31231,31237,31247,31249,
-31253,31259,31267,31271,31277,31307,31319,31321,
-31327,31333,31337,31357,31379,31387,31391,31393,
-31397,31469,31477,31481,31489,31511,31513,31517,
-31531,31541,31543,31547,31567,31573,31583,31601,
-31607,31627,31643,31649,31657,31663,31667,31687,
-31699,31721,31723,31727,31729,31741,31751,31769,
-31771,31793,31799,31817,31847,31849,31859,31873,
-31883,31891,31907,31957,31963,31973,31981,31991,
-32003,32009,32027,32029,32051,32057,32059,32063,
-32069,32077,32083,32089,32099,32117,32119,32141,
-32143,32159,32173,32183,32189,32191,32203,32213,
-32233,32237,32251,32257,32261,32297,32299,32303,
-32309,32321,32323,32327,32341,32353,32359,32363,
-32369,32371,32377,32381,32401,32411,32413,32423,
-32429,32441,32443,32467,32479,32491,32497,32503,
-32507,32531,32533,32537,32561,32563,32569,32573,
-32579,32587,32603,32609,32611,32621,32633,32647,
-32653,32687,32693,32707,32713,32717,32719,32749,
-32771,32779,32783,32789,32797,32801,32803,32831,
-32833,32839,32843,32869,32887,32909,32911,32917,
-32933,32939,32941,32957,32969,32971,32983,32987,
-32993,32999,33013,33023,33029,33037,33049,33053,
-33071,33073,33083,33091,33107,33113,33119,33149,
-33151,33161,33179,33181,33191,33199,33203,33211,
-33223,33247,33287,33289,33301,33311,33317,33329,
-33331,33343,33347,33349,33353,33359,33377,33391,
-33403,33409,33413,33427,33457,33461,33469,33479,
-33487,33493,33503,33521,33529,33533,33547,33563,
-33569,33577,33581,33587,33589,33599,33601,33613,
-33617,33619,33623,33629,33637,33641,33647,33679,
-33703,33713,33721,33739,33749,33751,33757,33767,
-33769,33773,33791,33797,33809,33811,33827,33829,
-33851,33857,33863,33871,33889,33893,33911,33923,
-33931,33937,33941,33961,33967,33997,34019,34031,
-34033,34039,34057,34061,34123,34127,34129,34141,
-34147,34157,34159,34171,34183,34211,34213,34217,
-34231,34253,34259,34261,34267,34273,34283,34297,
-34301,34303,34313,34319,34327,34337,34351,34361,
-34367,34369,34381,34403,34421,34429,34439,34457,
-34469,34471,34483,34487,34499,34501,34511,34513,
-34519,34537,34543,34549,34583,34589,34591,34603,
-34607,34613,34631,34649,34651,34667,34673,34679,
-34687,34693,34703,34721,34729,34739,34747,34757,
-34759,34763,34781,34807,34819,34841,34843,34847,
-34849,34871,34877,34883,34897,34913,34919,34939,
-34949,34961,34963,34981,35023,35027,35051,35053,
-35059,35069,35081,35083,35089,35099,35107,35111,
-35117,35129,35141,35149,35153,35159,35171,35201,
-35221,35227,35251,35257,35267,35279,35281,35291,
-35311,35317,35323,35327,35339,35353,35363,35381,
-35393,35401,35407,35419,35423,35437,35447,35449,
-35461,35491,35507,35509,35521,35527,35531,35533,
-35537,35543,35569,35573,35591,35593,35597,35603,
-35617,35671,35677,35729,35731,35747,35753,35759,
-35771,35797,35801,35803,35809,35831,35837,35839,
-35851,35863,35869,35879,35897,35899,35911,35923,
-35933,35951,35963,35969,35977,35983,35993,35999,
-36007,36011,36013,36017,36037,36061,36067,36073,
-36083,36097,36107,36109,36131,36137,36151,36161,
-36187,36191,36209,36217,36229,36241,36251,36263,
-36269,36277,36293,36299,36307,36313,36319,36341,
-36343,36353,36373,36383,36389,36433,36451,36457,
-36467,36469,36473,36479,36493,36497,36523,36527,
-36529,36541,36551,36559,36563,36571,36583,36587,
-36599,36607,36629,36637,36643,36653,36671,36677,
-36683,36691,36697,36709,36713,36721,36739,36749,
-36761,36767,36779,36781,36787,36791,36793,36809,
-36821,36833,36847,36857,36871,36877,36887,36899,
-36901,36913,36919,36923,36929,36931,36943,36947,
-36973,36979,36997,37003,37013,37019,37021,37039,
-37049,37057,37061,37087,37097,37117,37123,37139,
-37159,37171,37181,37189,37199,37201,37217,37223,
-37243,37253,37273,37277,37307,37309,37313,37321,
-37337,37339,37357,37361,37363,37369,37379,37397,
-37409,37423,37441,37447,37463,37483,37489,37493,
-37501,37507,37511,37517,37529,37537,37547,37549,
-37561,37567,37571,37573,37579,37589,37591,37607,
-37619,37633,37643,37649,37657,37663,37691,37693,
-37699,37717,37747,37781,37783,37799,37811,37813,
-37831,37847,37853,37861,37871,37879,37889,37897,
-37907,37951,37957,37963,37967,37987,37991,37993,
-37997,38011,38039,38047,38053,38069,38083,38113,
-38119,38149,38153,38167,38177,38183,38189,38197,
-38201,38219,38231,38237,38239,38261,38273,38281,
-38287,38299,38303,38317,38321,38327,38329,38333,
-38351,38371,38377,38393,38431,38447,38449,38453,
-38459,38461,38501,38543,38557,38561,38567,38569,
-38593,38603,38609,38611,38629,38639,38651,38653,
-38669,38671,38677,38693,38699,38707,38711,38713,
-38723,38729,38737,38747,38749,38767,38783,38791,
-38803,38821,38833,38839,38851,38861,38867,38873,
-38891,38903,38917,38921,38923,38933,38953,38959,
-38971,38977,38993,39019,39023,39041,39043,39047,
-39079,39089,39097,39103,39107,39113,39119,39133,
-39139,39157,39161,39163,39181,39191,39199,39209,
-39217,39227,39229,39233,39239,39241,39251,39293,
-39301,39313,39317,39323,39341,39343,39359,39367,
-39371,39373,39383,39397,39409,39419,39439,39443,
-39451,39461,39499,39503,39509,39511,39521,39541,
-39551,39563,39569,39581,39607,39619,39623,39631,
-39659,39667,39671,39679,39703,39709,39719,39727,
-39733,39749,39761,39769,39779,39791,39799,39821,
-39827,39829,39839,39841,39847,39857,39863,39869,
-39877,39883,39887,39901,39929,39937,39953,39971,
-39979,39983,39989,40009,40013,40031,40037,40039,
-40063,40087,40093,40099,40111,40123,40127,40129,
-40151,40153,40163,40169,40177,40189,40193,40213,
-40231,40237,40241,40253,40277,40283,40289,40343,
-40351,40357,40361,40387,40423,40427,40429,40433,
-40459,40471,40483,40487,40493,40499,40507,40519,
-40529,40531,40543,40559,40577,40583,40591,40597,
-40609,40627,40637,40639,40693,40697,40699,40709,
-40739,40751,40759,40763,40771,40787,40801,40813,
-40819,40823,40829,40841,40847,40849,40853,40867,
-40879,40883,40897,40903,40927,40933,40939,40949,
-40961,40973,40993,41011,41017,41023,41039,41047,
-41051,41057,41077,41081,41113,41117,41131,41141,
-41143,41149,41161,41177,41179,41183,41189,41201,
-41203,41213,41221,41227,41231,41233,41243,41257,
-41263,41269,41281,41299,41333,41341,41351,41357,
-41381,41387,41389,41399,41411,41413,41443,41453,
-41467,41479,41491,41507,41513,41519,41521,41539,
-41543,41549,41579,41593,41597,41603,41609,41611,
-41617,41621,41627,41641,41647,41651,41659,41669,
-41681,41687,41719,41729,41737,41759,41761,41771,
-41777,41801,41809,41813,41843,41849,41851,41863,
-41879,41887,41893,41897,41903,41911,41927,41941,
-41947,41953,41957,41959,41969,41981,41983,41999,
-42013,42017,42019,42023,42043,42061,42071,42073,
-42083,42089,42101,42131,42139,42157,42169,42179,
-42181,42187,42193,42197,42209,42221,42223,42227,
-42239,42257,42281,42283,42293,42299,42307,42323,
-42331,42337,42349,42359,42373,42379,42391,42397,
-42403,42407,42409,42433,42437,42443,42451,42457,
-42461,42463,42467,42473,42487,42491,42499,42509,
-42533,42557,42569,42571,42577,42589,42611,42641,
-42643,42649,42667,42677,42683,42689,42697,42701,
-42703,42709,42719,42727,42737,42743,42751,42767,
-42773,42787,42793,42797,42821,42829,42839,42841,
-42853,42859,42863,42899,42901,42923,42929,42937,
-42943,42953,42961,42967,42979,42989,43003,43013,
-43019,43037,43049,43051,43063,43067,43093,43103,
-43117,43133,43151,43159,43177,43189,43201,43207,
-43223,43237,43261,43271,43283,43291,43313,43319,
-43321,43331,43391,43397,43399,43403,43411,43427,
-43441,43451,43457,43481,43487,43499,43517,43541,
-43543,43573,43577,43579,43591,43597,43607,43609,
-43613,43627,43633,43649,43651,43661,43669,43691,
-43711,43717,43721,43753,43759,43777,43781,43783,
-43787,43789,43793,43801,43853,43867,43889,43891,
-43913,43933,43943,43951,43961,43963,43969,43973,
-43987,43991,43997,44017,44021,44027,44029,44041,
-44053,44059,44071,44087,44089,44101,44111,44119,
-44123,44129,44131,44159,44171,44179,44189,44201,
-44203,44207,44221,44249,44257,44263,44267,44269,
-44273,44279,44281,44293,44351,44357,44371,44381,
-44383,44389,44417,44449,44453,44483,44491,44497,
-44501,44507,44519,44531,44533,44537,44543,44549,
-44563,44579,44587,44617,44621,44623,44633,44641,
-44647,44651,44657,44683,44687,44699,44701,44711,
-44729,44741,44753,44771,44773,44777,44789,44797,
-44809,44819,44839,44843,44851,44867,44879,44887,
-44893,44909,44917,44927,44939,44953,44959,44963,
-44971,44983,44987,45007,45013,45053,45061,45077,
-45083,45119,45121,45127,45131,45137,45139,45161,
-45179,45181,45191,45197,45233,45247,45259,45263,
-45281,45289,45293,45307,45317,45319,45329,45337,
-45341,45343,45361,45377,45389,45403,45413,45427,
-45433,45439,45481,45491,45497,45503,45523,45533,
-45541,45553,45557,45569,45587,45589,45599,45613,
-45631,45641,45659,45667,45673,45677,45691,45697,
-45707,45737,45751,45757,45763,45767,45779,45817,
-45821,45823,45827,45833,45841,45853,45863,45869,
-45887,45893,45943,45949,45953,45959,45971,45979,
-45989,46021,46027,46049,46051,46061,46073,46091,
-46093,46099,46103,46133,46141,46147,46153,46171,
-46181,46183,46187,46199,46219,46229,46237,46261,
-46271,46273,46279,46301,46307,46309,46327,46337,
+	2, 3, 5, 7, 11, 13, 17, 19,
+	23, 29, 31, 37, 41, 43, 47, 53,
+	59, 61, 67, 71, 73, 79, 83, 89,
+	97, 101, 103, 107, 109, 113, 127, 131,
+	137, 139, 149, 151, 157, 163, 167, 173,
+	179, 181, 191, 193, 197, 199, 211, 223,
+	227, 229, 233, 239, 241, 251, 257, 263,
+	269, 271, 277, 281, 283, 293, 307, 311,
+	313, 317, 331, 337, 347, 349, 353, 359,
+	367, 373, 379, 383, 389, 397, 401, 409,
+	419, 421, 431, 433, 439, 443, 449, 457,
+	461, 463, 467, 479, 487, 491, 499, 503,
+	509, 521, 523, 541, 547, 557, 563, 569,
+	571, 577, 587, 593, 599, 601, 607, 613,
+	617, 619, 631, 641, 643, 647, 653, 659,
+	661, 673, 677, 683, 691, 701, 709, 719,
+	727, 733, 739, 743, 751, 757, 761, 769,
+	773, 787, 797, 809, 811, 821, 823, 827,
+	829, 839, 853, 857, 859, 863, 877, 881,
+	883, 887, 907, 911, 919, 929, 937, 941,
+	947, 953, 967, 971, 977, 983, 991, 997,
+	1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049,
+	1051, 1061, 1063, 1069, 1087, 1091, 1093, 1097,
+	1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163,
+	1171, 1181, 1187, 1193, 1201, 1213, 1217, 1223,
+	1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283,
+	1289, 1291, 1297, 1301, 1303, 1307, 1319, 1321,
+	1327, 1361, 1367, 1373, 1381, 1399, 1409, 1423,
+	1427, 1429, 1433, 1439, 1447, 1451, 1453, 1459,
+	1471, 1481, 1483, 1487, 1489, 1493, 1499, 1511,
+	1523, 1531, 1543, 1549, 1553, 1559, 1567, 1571,
+	1579, 1583, 1597, 1601, 1607, 1609, 1613, 1619,
+	1621, 1627, 1637, 1657, 1663, 1667, 1669, 1693,
+	1697, 1699, 1709, 1721, 1723, 1733, 1741, 1747,
+	1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811,
+	1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877,
+	1879, 1889, 1901, 1907, 1913, 1931, 1933, 1949,
+	1951, 1973, 1979, 1987, 1993, 1997, 1999, 2003,
+	2011, 2017, 2027, 2029, 2039, 2053, 2063, 2069,
+	2081, 2083, 2087, 2089, 2099, 2111, 2113, 2129,
+	2131, 2137, 2141, 2143, 2153, 2161, 2179, 2203,
+	2207, 2213, 2221, 2237, 2239, 2243, 2251, 2267,
+	2269, 2273, 2281, 2287, 2293, 2297, 2309, 2311,
+	2333, 2339, 2341, 2347, 2351, 2357, 2371, 2377,
+	2381, 2383, 2389, 2393, 2399, 2411, 2417, 2423,
+	2437, 2441, 2447, 2459, 2467, 2473, 2477, 2503,
+	2521, 2531, 2539, 2543, 2549, 2551, 2557, 2579,
+	2591, 2593, 2609, 2617, 2621, 2633, 2647, 2657,
+	2659, 2663, 2671, 2677, 2683, 2687, 2689, 2693,
+	2699, 2707, 2711, 2713, 2719, 2729, 2731, 2741,
+	2749, 2753, 2767, 2777, 2789, 2791, 2797, 2801,
+	2803, 2819, 2833, 2837, 2843, 2851, 2857, 2861,
+	2879, 2887, 2897, 2903, 2909, 2917, 2927, 2939,
+	2953, 2957, 2963, 2969, 2971, 2999, 3001, 3011,
+	3019, 3023, 3037, 3041, 3049, 3061, 3067, 3079,
+	3083, 3089, 3109, 3119, 3121, 3137, 3163, 3167,
+	3169, 3181, 3187, 3191, 3203, 3209, 3217, 3221,
+	3229, 3251, 3253, 3257, 3259, 3271, 3299, 3301,
+	3307, 3313, 3319, 3323, 3329, 3331, 3343, 3347,
+	3359, 3361, 3371, 3373, 3389, 3391, 3407, 3413,
+	3433, 3449, 3457, 3461, 3463, 3467, 3469, 3491,
+	3499, 3511, 3517, 3527, 3529, 3533, 3539, 3541,
+	3547, 3557, 3559, 3571, 3581, 3583, 3593, 3607,
+	3613, 3617, 3623, 3631, 3637, 3643, 3659, 3671,
+	3673, 3677, 3691, 3697, 3701, 3709, 3719, 3727,
+	3733, 3739, 3761, 3767, 3769, 3779, 3793, 3797,
+	3803, 3821, 3823, 3833, 3847, 3851, 3853, 3863,
+	3877, 3881, 3889, 3907, 3911, 3917, 3919, 3923,
+	3929, 3931, 3943, 3947, 3967, 3989, 4001, 4003,
+	4007, 4013, 4019, 4021, 4027, 4049, 4051, 4057,
+	4073, 4079, 4091, 4093, 4099, 4111, 4127, 4129,
+	4133, 4139, 4153, 4157, 4159, 4177, 4201, 4211,
+	4217, 4219, 4229, 4231, 4241, 4243, 4253, 4259,
+	4261, 4271, 4273, 4283, 4289, 4297, 4327, 4337,
+	4339, 4349, 4357, 4363, 4373, 4391, 4397, 4409,
+	4421, 4423, 4441, 4447, 4451, 4457, 4463, 4481,
+	4483, 4493, 4507, 4513, 4517, 4519, 4523, 4547,
+	4549, 4561, 4567, 4583, 4591, 4597, 4603, 4621,
+	4637, 4639, 4643, 4649, 4651, 4657, 4663, 4673,
+	4679, 4691, 4703, 4721, 4723, 4729, 4733, 4751,
+	4759, 4783, 4787, 4789, 4793, 4799, 4801, 4813,
+	4817, 4831, 4861, 4871, 4877, 4889, 4903, 4909,
+	4919, 4931, 4933, 4937, 4943, 4951, 4957, 4967,
+	4969, 4973, 4987, 4993, 4999, 5003, 5009, 5011,
+	5021, 5023, 5039, 5051, 5059, 5077, 5081, 5087,
+	5099, 5101, 5107, 5113, 5119, 5147, 5153, 5167,
+	5171, 5179, 5189, 5197, 5209, 5227, 5231, 5233,
+	5237, 5261, 5273, 5279, 5281, 5297, 5303, 5309,
+	5323, 5333, 5347, 5351, 5381, 5387, 5393, 5399,
+	5407, 5413, 5417, 5419, 5431, 5437, 5441, 5443,
+	5449, 5471, 5477, 5479, 5483, 5501, 5503, 5507,
+	5519, 5521, 5527, 5531, 5557, 5563, 5569, 5573,
+	5581, 5591, 5623, 5639, 5641, 5647, 5651, 5653,
+	5657, 5659, 5669, 5683, 5689, 5693, 5701, 5711,
+	5717, 5737, 5741, 5743, 5749, 5779, 5783, 5791,
+	5801, 5807, 5813, 5821, 5827, 5839, 5843, 5849,
+	5851, 5857, 5861, 5867, 5869, 5879, 5881, 5897,
+	5903, 5923, 5927, 5939, 5953, 5981, 5987, 6007,
+	6011, 6029, 6037, 6043, 6047, 6053, 6067, 6073,
+	6079, 6089, 6091, 6101, 6113, 6121, 6131, 6133,
+	6143, 6151, 6163, 6173, 6197, 6199, 6203, 6211,
+	6217, 6221, 6229, 6247, 6257, 6263, 6269, 6271,
+	6277, 6287, 6299, 6301, 6311, 6317, 6323, 6329,
+	6337, 6343, 6353, 6359, 6361, 6367, 6373, 6379,
+	6389, 6397, 6421, 6427, 6449, 6451, 6469, 6473,
+	6481, 6491, 6521, 6529, 6547, 6551, 6553, 6563,
+	6569, 6571, 6577, 6581, 6599, 6607, 6619, 6637,
+	6653, 6659, 6661, 6673, 6679, 6689, 6691, 6701,
+	6703, 6709, 6719, 6733, 6737, 6761, 6763, 6779,
+	6781, 6791, 6793, 6803, 6823, 6827, 6829, 6833,
+	6841, 6857, 6863, 6869, 6871, 6883, 6899, 6907,
+	6911, 6917, 6947, 6949, 6959, 6961, 6967, 6971,
+	6977, 6983, 6991, 6997, 7001, 7013, 7019, 7027,
+	7039, 7043, 7057, 7069, 7079, 7103, 7109, 7121,
+	7127, 7129, 7151, 7159, 7177, 7187, 7193, 7207,
+	7211, 7213, 7219, 7229, 7237, 7243, 7247, 7253,
+	7283, 7297, 7307, 7309, 7321, 7331, 7333, 7349,
+	7351, 7369, 7393, 7411, 7417, 7433, 7451, 7457,
+	7459, 7477, 7481, 7487, 7489, 7499, 7507, 7517,
+	7523, 7529, 7537, 7541, 7547, 7549, 7559, 7561,
+	7573, 7577, 7583, 7589, 7591, 7603, 7607, 7621,
+	7639, 7643, 7649, 7669, 7673, 7681, 7687, 7691,
+	7699, 7703, 7717, 7723, 7727, 7741, 7753, 7757,
+	7759, 7789, 7793, 7817, 7823, 7829, 7841, 7853,
+	7867, 7873, 7877, 7879, 7883, 7901, 7907, 7919,
+	7927, 7933, 7937, 7949, 7951, 7963, 7993, 8009,
+	8011, 8017, 8039, 8053, 8059, 8069, 8081, 8087,
+	8089, 8093, 8101, 8111, 8117, 8123, 8147, 8161,
+	8167, 8171, 8179, 8191, 8209, 8219, 8221, 8231,
+	8233, 8237, 8243, 8263, 8269, 8273, 8287, 8291,
+	8293, 8297, 8311, 8317, 8329, 8353, 8363, 8369,
+	8377, 8387, 8389, 8419, 8423, 8429, 8431, 8443,
+	8447, 8461, 8467, 8501, 8513, 8521, 8527, 8537,
+	8539, 8543, 8563, 8573, 8581, 8597, 8599, 8609,
+	8623, 8627, 8629, 8641, 8647, 8663, 8669, 8677,
+	8681, 8689, 8693, 8699, 8707, 8713, 8719, 8731,
+	8737, 8741, 8747, 8753, 8761, 8779, 8783, 8803,
+	8807, 8819, 8821, 8831, 8837, 8839, 8849, 8861,
+	8863, 8867, 8887, 8893, 8923, 8929, 8933, 8941,
+	8951, 8963, 8969, 8971, 8999, 9001, 9007, 9011,
+	9013, 9029, 9041, 9043, 9049, 9059, 9067, 9091,
+	9103, 9109, 9127, 9133, 9137, 9151, 9157, 9161,
+	9173, 9181, 9187, 9199, 9203, 9209, 9221, 9227,
+	9239, 9241, 9257, 9277, 9281, 9283, 9293, 9311,
+	9319, 9323, 9337, 9341, 9343, 9349, 9371, 9377,
+	9391, 9397, 9403, 9413, 9419, 9421, 9431, 9433,
+	9437, 9439, 9461, 9463, 9467, 9473, 9479, 9491,
+	9497, 9511, 9521, 9533, 9539, 9547, 9551, 9587,
+	9601, 9613, 9619, 9623, 9629, 9631, 9643, 9649,
+	9661, 9677, 9679, 9689, 9697, 9719, 9721, 9733,
+	9739, 9743, 9749, 9767, 9769, 9781, 9787, 9791,
+	9803, 9811, 9817, 9829, 9833, 9839, 9851, 9857,
+	9859, 9871, 9883, 9887, 9901, 9907, 9923, 9929,
+	9931, 9941, 9949, 9967, 9973, 10007, 10009, 10037,
+	10039, 10061, 10067, 10069, 10079, 10091, 10093, 10099,
+	10103, 10111, 10133, 10139, 10141, 10151, 10159, 10163,
+	10169, 10177, 10181, 10193, 10211, 10223, 10243, 10247,
+	10253, 10259, 10267, 10271, 10273, 10289, 10301, 10303,
+	10313, 10321, 10331, 10333, 10337, 10343, 10357, 10369,
+	10391, 10399, 10427, 10429, 10433, 10453, 10457, 10459,
+	10463, 10477, 10487, 10499, 10501, 10513, 10529, 10531,
+	10559, 10567, 10589, 10597, 10601, 10607, 10613, 10627,
+	10631, 10639, 10651, 10657, 10663, 10667, 10687, 10691,
+	10709, 10711, 10723, 10729, 10733, 10739, 10753, 10771,
+	10781, 10789, 10799, 10831, 10837, 10847, 10853, 10859,
+	10861, 10867, 10883, 10889, 10891, 10903, 10909, 10937,
+	10939, 10949, 10957, 10973, 10979, 10987, 10993, 11003,
+	11027, 11047, 11057, 11059, 11069, 11071, 11083, 11087,
+	11093, 11113, 11117, 11119, 11131, 11149, 11159, 11161,
+	11171, 11173, 11177, 11197, 11213, 11239, 11243, 11251,
+	11257, 11261, 11273, 11279, 11287, 11299, 11311, 11317,
+	11321, 11329, 11351, 11353, 11369, 11383, 11393, 11399,
+	11411, 11423, 11437, 11443, 11447, 11467, 11471, 11483,
+	11489, 11491, 11497, 11503, 11519, 11527, 11549, 11551,
+	11579, 11587, 11593, 11597, 11617, 11621, 11633, 11657,
+	11677, 11681, 11689, 11699, 11701, 11717, 11719, 11731,
+	11743, 11777, 11779, 11783, 11789, 11801, 11807, 11813,
+	11821, 11827, 11831, 11833, 11839, 11863, 11867, 11887,
+	11897, 11903, 11909, 11923, 11927, 11933, 11939, 11941,
+	11953, 11959, 11969, 11971, 11981, 11987, 12007, 12011,
+	12037, 12041, 12043, 12049, 12071, 12073, 12097, 12101,
+	12107, 12109, 12113, 12119, 12143, 12149, 12157, 12161,
+	12163, 12197, 12203, 12211, 12227, 12239, 12241, 12251,
+	12253, 12263, 12269, 12277, 12281, 12289, 12301, 12323,
+	12329, 12343, 12347, 12373, 12377, 12379, 12391, 12401,
+	12409, 12413, 12421, 12433, 12437, 12451, 12457, 12473,
+	12479, 12487, 12491, 12497, 12503, 12511, 12517, 12527,
+	12539, 12541, 12547, 12553, 12569, 12577, 12583, 12589,
+	12601, 12611, 12613, 12619, 12637, 12641, 12647, 12653,
+	12659, 12671, 12689, 12697, 12703, 12713, 12721, 12739,
+	12743, 12757, 12763, 12781, 12791, 12799, 12809, 12821,
+	12823, 12829, 12841, 12853, 12889, 12893, 12899, 12907,
+	12911, 12917, 12919, 12923, 12941, 12953, 12959, 12967,
+	12973, 12979, 12983, 13001, 13003, 13007, 13009, 13033,
+	13037, 13043, 13049, 13063, 13093, 13099, 13103, 13109,
+	13121, 13127, 13147, 13151, 13159, 13163, 13171, 13177,
+	13183, 13187, 13217, 13219, 13229, 13241, 13249, 13259,
+	13267, 13291, 13297, 13309, 13313, 13327, 13331, 13337,
+	13339, 13367, 13381, 13397, 13399, 13411, 13417, 13421,
+	13441, 13451, 13457, 13463, 13469, 13477, 13487, 13499,
+	13513, 13523, 13537, 13553, 13567, 13577, 13591, 13597,
+	13613, 13619, 13627, 13633, 13649, 13669, 13679, 13681,
+	13687, 13691, 13693, 13697, 13709, 13711, 13721, 13723,
+	13729, 13751, 13757, 13759, 13763, 13781, 13789, 13799,
+	13807, 13829, 13831, 13841, 13859, 13873, 13877, 13879,
+	13883, 13901, 13903, 13907, 13913, 13921, 13931, 13933,
+	13963, 13967, 13997, 13999, 14009, 14011, 14029, 14033,
+	14051, 14057, 14071, 14081, 14083, 14087, 14107, 14143,
+	14149, 14153, 14159, 14173, 14177, 14197, 14207, 14221,
+	14243, 14249, 14251, 14281, 14293, 14303, 14321, 14323,
+	14327, 14341, 14347, 14369, 14387, 14389, 14401, 14407,
+	14411, 14419, 14423, 14431, 14437, 14447, 14449, 14461,
+	14479, 14489, 14503, 14519, 14533, 14537, 14543, 14549,
+	14551, 14557, 14561, 14563, 14591, 14593, 14621, 14627,
+	14629, 14633, 14639, 14653, 14657, 14669, 14683, 14699,
+	14713, 14717, 14723, 14731, 14737, 14741, 14747, 14753,
+	14759, 14767, 14771, 14779, 14783, 14797, 14813, 14821,
+	14827, 14831, 14843, 14851, 14867, 14869, 14879, 14887,
+	14891, 14897, 14923, 14929, 14939, 14947, 14951, 14957,
+	14969, 14983, 15013, 15017, 15031, 15053, 15061, 15073,
+	15077, 15083, 15091, 15101, 15107, 15121, 15131, 15137,
+	15139, 15149, 15161, 15173, 15187, 15193, 15199, 15217,
+	15227, 15233, 15241, 15259, 15263, 15269, 15271, 15277,
+	15287, 15289, 15299, 15307, 15313, 15319, 15329, 15331,
+	15349, 15359, 15361, 15373, 15377, 15383, 15391, 15401,
+	15413, 15427, 15439, 15443, 15451, 15461, 15467, 15473,
+	15493, 15497, 15511, 15527, 15541, 15551, 15559, 15569,
+	15581, 15583, 15601, 15607, 15619, 15629, 15641, 15643,
+	15647, 15649, 15661, 15667, 15671, 15679, 15683, 15727,
+	15731, 15733, 15737, 15739, 15749, 15761, 15767, 15773,
+	15787, 15791, 15797, 15803, 15809, 15817, 15823, 15859,
+	15877, 15881, 15887, 15889, 15901, 15907, 15913, 15919,
+	15923, 15937, 15959, 15971, 15973, 15991, 16001, 16007,
+	16033, 16057, 16061, 16063, 16067, 16069, 16073, 16087,
+	16091, 16097, 16103, 16111, 16127, 16139, 16141, 16183,
+	16187, 16189, 16193, 16217, 16223, 16229, 16231, 16249,
+	16253, 16267, 16273, 16301, 16319, 16333, 16339, 16349,
+	16361, 16363, 16369, 16381, 16411, 16417, 16421, 16427,
+	16433, 16447, 16451, 16453, 16477, 16481, 16487, 16493,
+	16519, 16529, 16547, 16553, 16561, 16567, 16573, 16603,
+	16607, 16619, 16631, 16633, 16649, 16651, 16657, 16661,
+	16673, 16691, 16693, 16699, 16703, 16729, 16741, 16747,
+	16759, 16763, 16787, 16811, 16823, 16829, 16831, 16843,
+	16871, 16879, 16883, 16889, 16901, 16903, 16921, 16927,
+	16931, 16937, 16943, 16963, 16979, 16981, 16987, 16993,
+	17011, 17021, 17027, 17029, 17033, 17041, 17047, 17053,
+	17077, 17093, 17099, 17107, 17117, 17123, 17137, 17159,
+	17167, 17183, 17189, 17191, 17203, 17207, 17209, 17231,
+	17239, 17257, 17291, 17293, 17299, 17317, 17321, 17327,
+	17333, 17341, 17351, 17359, 17377, 17383, 17387, 17389,
+	17393, 17401, 17417, 17419, 17431, 17443, 17449, 17467,
+	17471, 17477, 17483, 17489, 17491, 17497, 17509, 17519,
+	17539, 17551, 17569, 17573, 17579, 17581, 17597, 17599,
+	17609, 17623, 17627, 17657, 17659, 17669, 17681, 17683,
+	17707, 17713, 17729, 17737, 17747, 17749, 17761, 17783,
+	17789, 17791, 17807, 17827, 17837, 17839, 17851, 17863,
+	17881, 17891, 17903, 17909, 17911, 17921, 17923, 17929,
+	17939, 17957, 17959, 17971, 17977, 17981, 17987, 17989,
+	18013, 18041, 18043, 18047, 18049, 18059, 18061, 18077,
+	18089, 18097, 18119, 18121, 18127, 18131, 18133, 18143,
+	18149, 18169, 18181, 18191, 18199, 18211, 18217, 18223,
+	18229, 18233, 18251, 18253, 18257, 18269, 18287, 18289,
+	18301, 18307, 18311, 18313, 18329, 18341, 18353, 18367,
+	18371, 18379, 18397, 18401, 18413, 18427, 18433, 18439,
+	18443, 18451, 18457, 18461, 18481, 18493, 18503, 18517,
+	18521, 18523, 18539, 18541, 18553, 18583, 18587, 18593,
+	18617, 18637, 18661, 18671, 18679, 18691, 18701, 18713,
+	18719, 18731, 18743, 18749, 18757, 18773, 18787, 18793,
+	18797, 18803, 18839, 18859, 18869, 18899, 18911, 18913,
+	18917, 18919, 18947, 18959, 18973, 18979, 19001, 19009,
+	19013, 19031, 19037, 19051, 19069, 19073, 19079, 19081,
+	19087, 19121, 19139, 19141, 19157, 19163, 19181, 19183,
+	19207, 19211, 19213, 19219, 19231, 19237, 19249, 19259,
+	19267, 19273, 19289, 19301, 19309, 19319, 19333, 19373,
+	19379, 19381, 19387, 19391, 19403, 19417, 19421, 19423,
+	19427, 19429, 19433, 19441, 19447, 19457, 19463, 19469,
+	19471, 19477, 19483, 19489, 19501, 19507, 19531, 19541,
+	19543, 19553, 19559, 19571, 19577, 19583, 19597, 19603,
+	19609, 19661, 19681, 19687, 19697, 19699, 19709, 19717,
+	19727, 19739, 19751, 19753, 19759, 19763, 19777, 19793,
+	19801, 19813, 19819, 19841, 19843, 19853, 19861, 19867,
+	19889, 19891, 19913, 19919, 19927, 19937, 19949, 19961,
+	19963, 19973, 19979, 19991, 19993, 19997, 20011, 20021,
+	20023, 20029, 20047, 20051, 20063, 20071, 20089, 20101,
+	20107, 20113, 20117, 20123, 20129, 20143, 20147, 20149,
+	20161, 20173, 20177, 20183, 20201, 20219, 20231, 20233,
+	20249, 20261, 20269, 20287, 20297, 20323, 20327, 20333,
+	20341, 20347, 20353, 20357, 20359, 20369, 20389, 20393,
+	20399, 20407, 20411, 20431, 20441, 20443, 20477, 20479,
+	20483, 20507, 20509, 20521, 20533, 20543, 20549, 20551,
+	20563, 20593, 20599, 20611, 20627, 20639, 20641, 20663,
+	20681, 20693, 20707, 20717, 20719, 20731, 20743, 20747,
+	20749, 20753, 20759, 20771, 20773, 20789, 20807, 20809,
+	20849, 20857, 20873, 20879, 20887, 20897, 20899, 20903,
+	20921, 20929, 20939, 20947, 20959, 20963, 20981, 20983,
+	21001, 21011, 21013, 21017, 21019, 21023, 21031, 21059,
+	21061, 21067, 21089, 21101, 21107, 21121, 21139, 21143,
+	21149, 21157, 21163, 21169, 21179, 21187, 21191, 21193,
+	21211, 21221, 21227, 21247, 21269, 21277, 21283, 21313,
+	21317, 21319, 21323, 21341, 21347, 21377, 21379, 21383,
+	21391, 21397, 21401, 21407, 21419, 21433, 21467, 21481,
+	21487, 21491, 21493, 21499, 21503, 21517, 21521, 21523,
+	21529, 21557, 21559, 21563, 21569, 21577, 21587, 21589,
+	21599, 21601, 21611, 21613, 21617, 21647, 21649, 21661,
+	21673, 21683, 21701, 21713, 21727, 21737, 21739, 21751,
+	21757, 21767, 21773, 21787, 21799, 21803, 21817, 21821,
+	21839, 21841, 21851, 21859, 21863, 21871, 21881, 21893,
+	21911, 21929, 21937, 21943, 21961, 21977, 21991, 21997,
+	22003, 22013, 22027, 22031, 22037, 22039, 22051, 22063,
+	22067, 22073, 22079, 22091, 22093, 22109, 22111, 22123,
+	22129, 22133, 22147, 22153, 22157, 22159, 22171, 22189,
+	22193, 22229, 22247, 22259, 22271, 22273, 22277, 22279,
+	22283, 22291, 22303, 22307, 22343, 22349, 22367, 22369,
+	22381, 22391, 22397, 22409, 22433, 22441, 22447, 22453,
+	22469, 22481, 22483, 22501, 22511, 22531, 22541, 22543,
+	22549, 22567, 22571, 22573, 22613, 22619, 22621, 22637,
+	22639, 22643, 22651, 22669, 22679, 22691, 22697, 22699,
+	22709, 22717, 22721, 22727, 22739, 22741, 22751, 22769,
+	22777, 22783, 22787, 22807, 22811, 22817, 22853, 22859,
+	22861, 22871, 22877, 22901, 22907, 22921, 22937, 22943,
+	22961, 22963, 22973, 22993, 23003, 23011, 23017, 23021,
+	23027, 23029, 23039, 23041, 23053, 23057, 23059, 23063,
+	23071, 23081, 23087, 23099, 23117, 23131, 23143, 23159,
+	23167, 23173, 23189, 23197, 23201, 23203, 23209, 23227,
+	23251, 23269, 23279, 23291, 23293, 23297, 23311, 23321,
+	23327, 23333, 23339, 23357, 23369, 23371, 23399, 23417,
+	23431, 23447, 23459, 23473, 23497, 23509, 23531, 23537,
+	23539, 23549, 23557, 23561, 23563, 23567, 23581, 23593,
+	23599, 23603, 23609, 23623, 23627, 23629, 23633, 23663,
+	23669, 23671, 23677, 23687, 23689, 23719, 23741, 23743,
+	23747, 23753, 23761, 23767, 23773, 23789, 23801, 23813,
+	23819, 23827, 23831, 23833, 23857, 23869, 23873, 23879,
+	23887, 23893, 23899, 23909, 23911, 23917, 23929, 23957,
+	23971, 23977, 23981, 23993, 24001, 24007, 24019, 24023,
+	24029, 24043, 24049, 24061, 24071, 24077, 24083, 24091,
+	24097, 24103, 24107, 24109, 24113, 24121, 24133, 24137,
+	24151, 24169, 24179, 24181, 24197, 24203, 24223, 24229,
+	24239, 24247, 24251, 24281, 24317, 24329, 24337, 24359,
+	24371, 24373, 24379, 24391, 24407, 24413, 24419, 24421,
+	24439, 24443, 24469, 24473, 24481, 24499, 24509, 24517,
+	24527, 24533, 24547, 24551, 24571, 24593, 24611, 24623,
+	24631, 24659, 24671, 24677, 24683, 24691, 24697, 24709,
+	24733, 24749, 24763, 24767, 24781, 24793, 24799, 24809,
+	24821, 24841, 24847, 24851, 24859, 24877, 24889, 24907,
+	24917, 24919, 24923, 24943, 24953, 24967, 24971, 24977,
+	24979, 24989, 25013, 25031, 25033, 25037, 25057, 25073,
+	25087, 25097, 25111, 25117, 25121, 25127, 25147, 25153,
+	25163, 25169, 25171, 25183, 25189, 25219, 25229, 25237,
+	25243, 25247, 25253, 25261, 25301, 25303, 25307, 25309,
+	25321, 25339, 25343, 25349, 25357, 25367, 25373, 25391,
+	25409, 25411, 25423, 25439, 25447, 25453, 25457, 25463,
+	25469, 25471, 25523, 25537, 25541, 25561, 25577, 25579,
+	25583, 25589, 25601, 25603, 25609, 25621, 25633, 25639,
+	25643, 25657, 25667, 25673, 25679, 25693, 25703, 25717,
+	25733, 25741, 25747, 25759, 25763, 25771, 25793, 25799,
+	25801, 25819, 25841, 25847, 25849, 25867, 25873, 25889,
+	25903, 25913, 25919, 25931, 25933, 25939, 25943, 25951,
+	25969, 25981, 25997, 25999, 26003, 26017, 26021, 26029,
+	26041, 26053, 26083, 26099, 26107, 26111, 26113, 26119,
+	26141, 26153, 26161, 26171, 26177, 26183, 26189, 26203,
+	26209, 26227, 26237, 26249, 26251, 26261, 26263, 26267,
+	26293, 26297, 26309, 26317, 26321, 26339, 26347, 26357,
+	26371, 26387, 26393, 26399, 26407, 26417, 26423, 26431,
+	26437, 26449, 26459, 26479, 26489, 26497, 26501, 26513,
+	26539, 26557, 26561, 26573, 26591, 26597, 26627, 26633,
+	26641, 26647, 26669, 26681, 26683, 26687, 26693, 26699,
+	26701, 26711, 26713, 26717, 26723, 26729, 26731, 26737,
+	26759, 26777, 26783, 26801, 26813, 26821, 26833, 26839,
+	26849, 26861, 26863, 26879, 26881, 26891, 26893, 26903,
+	26921, 26927, 26947, 26951, 26953, 26959, 26981, 26987,
+	26993, 27011, 27017, 27031, 27043, 27059, 27061, 27067,
+	27073, 27077, 27091, 27103, 27107, 27109, 27127, 27143,
+	27179, 27191, 27197, 27211, 27239, 27241, 27253, 27259,
+	27271, 27277, 27281, 27283, 27299, 27329, 27337, 27361,
+	27367, 27397, 27407, 27409, 27427, 27431, 27437, 27449,
+	27457, 27479, 27481, 27487, 27509, 27527, 27529, 27539,
+	27541, 27551, 27581, 27583, 27611, 27617, 27631, 27647,
+	27653, 27673, 27689, 27691, 27697, 27701, 27733, 27737,
+	27739, 27743, 27749, 27751, 27763, 27767, 27773, 27779,
+	27791, 27793, 27799, 27803, 27809, 27817, 27823, 27827,
+	27847, 27851, 27883, 27893, 27901, 27917, 27919, 27941,
+	27943, 27947, 27953, 27961, 27967, 27983, 27997, 28001,
+	28019, 28027, 28031, 28051, 28057, 28069, 28081, 28087,
+	28097, 28099, 28109, 28111, 28123, 28151, 28163, 28181,
+	28183, 28201, 28211, 28219, 28229, 28277, 28279, 28283,
+	28289, 28297, 28307, 28309, 28319, 28349, 28351, 28387,
+	28393, 28403, 28409, 28411, 28429, 28433, 28439, 28447,
+	28463, 28477, 28493, 28499, 28513, 28517, 28537, 28541,
+	28547, 28549, 28559, 28571, 28573, 28579, 28591, 28597,
+	28603, 28607, 28619, 28621, 28627, 28631, 28643, 28649,
+	28657, 28661, 28663, 28669, 28687, 28697, 28703, 28711,
+	28723, 28729, 28751, 28753, 28759, 28771, 28789, 28793,
+	28807, 28813, 28817, 28837, 28843, 28859, 28867, 28871,
+	28879, 28901, 28909, 28921, 28927, 28933, 28949, 28961,
+	28979, 29009, 29017, 29021, 29023, 29027, 29033, 29059,
+	29063, 29077, 29101, 29123, 29129, 29131, 29137, 29147,
+	29153, 29167, 29173, 29179, 29191, 29201, 29207, 29209,
+	29221, 29231, 29243, 29251, 29269, 29287, 29297, 29303,
+	29311, 29327, 29333, 29339, 29347, 29363, 29383, 29387,
+	29389, 29399, 29401, 29411, 29423, 29429, 29437, 29443,
+	29453, 29473, 29483, 29501, 29527, 29531, 29537, 29567,
+	29569, 29573, 29581, 29587, 29599, 29611, 29629, 29633,
+	29641, 29663, 29669, 29671, 29683, 29717, 29723, 29741,
+	29753, 29759, 29761, 29789, 29803, 29819, 29833, 29837,
+	29851, 29863, 29867, 29873, 29879, 29881, 29917, 29921,
+	29927, 29947, 29959, 29983, 29989, 30011, 30013, 30029,
+	30047, 30059, 30071, 30089, 30091, 30097, 30103, 30109,
+	30113, 30119, 30133, 30137, 30139, 30161, 30169, 30181,
+	30187, 30197, 30203, 30211, 30223, 30241, 30253, 30259,
+	30269, 30271, 30293, 30307, 30313, 30319, 30323, 30341,
+	30347, 30367, 30389, 30391, 30403, 30427, 30431, 30449,
+	30467, 30469, 30491, 30493, 30497, 30509, 30517, 30529,
+	30539, 30553, 30557, 30559, 30577, 30593, 30631, 30637,
+	30643, 30649, 30661, 30671, 30677, 30689, 30697, 30703,
+	30707, 30713, 30727, 30757, 30763, 30773, 30781, 30803,
+	30809, 30817, 30829, 30839, 30841, 30851, 30853, 30859,
+	30869, 30871, 30881, 30893, 30911, 30931, 30937, 30941,
+	30949, 30971, 30977, 30983, 31013, 31019, 31033, 31039,
+	31051, 31063, 31069, 31079, 31081, 31091, 31121, 31123,
+	31139, 31147, 31151, 31153, 31159, 31177, 31181, 31183,
+	31189, 31193, 31219, 31223, 31231, 31237, 31247, 31249,
+	31253, 31259, 31267, 31271, 31277, 31307, 31319, 31321,
+	31327, 31333, 31337, 31357, 31379, 31387, 31391, 31393,
+	31397, 31469, 31477, 31481, 31489, 31511, 31513, 31517,
+	31531, 31541, 31543, 31547, 31567, 31573, 31583, 31601,
+	31607, 31627, 31643, 31649, 31657, 31663, 31667, 31687,
+	31699, 31721, 31723, 31727, 31729, 31741, 31751, 31769,
+	31771, 31793, 31799, 31817, 31847, 31849, 31859, 31873,
+	31883, 31891, 31907, 31957, 31963, 31973, 31981, 31991,
+	32003, 32009, 32027, 32029, 32051, 32057, 32059, 32063,
+	32069, 32077, 32083, 32089, 32099, 32117, 32119, 32141,
+	32143, 32159, 32173, 32183, 32189, 32191, 32203, 32213,
+	32233, 32237, 32251, 32257, 32261, 32297, 32299, 32303,
+	32309, 32321, 32323, 32327, 32341, 32353, 32359, 32363,
+	32369, 32371, 32377, 32381, 32401, 32411, 32413, 32423,
+	32429, 32441, 32443, 32467, 32479, 32491, 32497, 32503,
+	32507, 32531, 32533, 32537, 32561, 32563, 32569, 32573,
+	32579, 32587, 32603, 32609, 32611, 32621, 32633, 32647,
+	32653, 32687, 32693, 32707, 32713, 32717, 32719, 32749,
+	32771, 32779, 32783, 32789, 32797, 32801, 32803, 32831,
+	32833, 32839, 32843, 32869, 32887, 32909, 32911, 32917,
+	32933, 32939, 32941, 32957, 32969, 32971, 32983, 32987,
+	32993, 32999, 33013, 33023, 33029, 33037, 33049, 33053,
+	33071, 33073, 33083, 33091, 33107, 33113, 33119, 33149,
+	33151, 33161, 33179, 33181, 33191, 33199, 33203, 33211,
+	33223, 33247, 33287, 33289, 33301, 33311, 33317, 33329,
+	33331, 33343, 33347, 33349, 33353, 33359, 33377, 33391,
+	33403, 33409, 33413, 33427, 33457, 33461, 33469, 33479,
+	33487, 33493, 33503, 33521, 33529, 33533, 33547, 33563,
+	33569, 33577, 33581, 33587, 33589, 33599, 33601, 33613,
+	33617, 33619, 33623, 33629, 33637, 33641, 33647, 33679,
+	33703, 33713, 33721, 33739, 33749, 33751, 33757, 33767,
+	33769, 33773, 33791, 33797, 33809, 33811, 33827, 33829,
+	33851, 33857, 33863, 33871, 33889, 33893, 33911, 33923,
+	33931, 33937, 33941, 33961, 33967, 33997, 34019, 34031,
+	34033, 34039, 34057, 34061, 34123, 34127, 34129, 34141,
+	34147, 34157, 34159, 34171, 34183, 34211, 34213, 34217,
+	34231, 34253, 34259, 34261, 34267, 34273, 34283, 34297,
+	34301, 34303, 34313, 34319, 34327, 34337, 34351, 34361,
+	34367, 34369, 34381, 34403, 34421, 34429, 34439, 34457,
+	34469, 34471, 34483, 34487, 34499, 34501, 34511, 34513,
+	34519, 34537, 34543, 34549, 34583, 34589, 34591, 34603,
+	34607, 34613, 34631, 34649, 34651, 34667, 34673, 34679,
+	34687, 34693, 34703, 34721, 34729, 34739, 34747, 34757,
+	34759, 34763, 34781, 34807, 34819, 34841, 34843, 34847,
+	34849, 34871, 34877, 34883, 34897, 34913, 34919, 34939,
+	34949, 34961, 34963, 34981, 35023, 35027, 35051, 35053,
+	35059, 35069, 35081, 35083, 35089, 35099, 35107, 35111,
+	35117, 35129, 35141, 35149, 35153, 35159, 35171, 35201,
+	35221, 35227, 35251, 35257, 35267, 35279, 35281, 35291,
+	35311, 35317, 35323, 35327, 35339, 35353, 35363, 35381,
+	35393, 35401, 35407, 35419, 35423, 35437, 35447, 35449,
+	35461, 35491, 35507, 35509, 35521, 35527, 35531, 35533,
+	35537, 35543, 35569, 35573, 35591, 35593, 35597, 35603,
+	35617, 35671, 35677, 35729, 35731, 35747, 35753, 35759,
+	35771, 35797, 35801, 35803, 35809, 35831, 35837, 35839,
+	35851, 35863, 35869, 35879, 35897, 35899, 35911, 35923,
+	35933, 35951, 35963, 35969, 35977, 35983, 35993, 35999,
+	36007, 36011, 36013, 36017, 36037, 36061, 36067, 36073,
+	36083, 36097, 36107, 36109, 36131, 36137, 36151, 36161,
+	36187, 36191, 36209, 36217, 36229, 36241, 36251, 36263,
+	36269, 36277, 36293, 36299, 36307, 36313, 36319, 36341,
+	36343, 36353, 36373, 36383, 36389, 36433, 36451, 36457,
+	36467, 36469, 36473, 36479, 36493, 36497, 36523, 36527,
+	36529, 36541, 36551, 36559, 36563, 36571, 36583, 36587,
+	36599, 36607, 36629, 36637, 36643, 36653, 36671, 36677,
+	36683, 36691, 36697, 36709, 36713, 36721, 36739, 36749,
+	36761, 36767, 36779, 36781, 36787, 36791, 36793, 36809,
+	36821, 36833, 36847, 36857, 36871, 36877, 36887, 36899,
+	36901, 36913, 36919, 36923, 36929, 36931, 36943, 36947,
+	36973, 36979, 36997, 37003, 37013, 37019, 37021, 37039,
+	37049, 37057, 37061, 37087, 37097, 37117, 37123, 37139,
+	37159, 37171, 37181, 37189, 37199, 37201, 37217, 37223,
+	37243, 37253, 37273, 37277, 37307, 37309, 37313, 37321,
+	37337, 37339, 37357, 37361, 37363, 37369, 37379, 37397,
+	37409, 37423, 37441, 37447, 37463, 37483, 37489, 37493,
+	37501, 37507, 37511, 37517, 37529, 37537, 37547, 37549,
+	37561, 37567, 37571, 37573, 37579, 37589, 37591, 37607,
+	37619, 37633, 37643, 37649, 37657, 37663, 37691, 37693,
+	37699, 37717, 37747, 37781, 37783, 37799, 37811, 37813,
+	37831, 37847, 37853, 37861, 37871, 37879, 37889, 37897,
+	37907, 37951, 37957, 37963, 37967, 37987, 37991, 37993,
+	37997, 38011, 38039, 38047, 38053, 38069, 38083, 38113,
+	38119, 38149, 38153, 38167, 38177, 38183, 38189, 38197,
+	38201, 38219, 38231, 38237, 38239, 38261, 38273, 38281,
+	38287, 38299, 38303, 38317, 38321, 38327, 38329, 38333,
+	38351, 38371, 38377, 38393, 38431, 38447, 38449, 38453,
+	38459, 38461, 38501, 38543, 38557, 38561, 38567, 38569,
+	38593, 38603, 38609, 38611, 38629, 38639, 38651, 38653,
+	38669, 38671, 38677, 38693, 38699, 38707, 38711, 38713,
+	38723, 38729, 38737, 38747, 38749, 38767, 38783, 38791,
+	38803, 38821, 38833, 38839, 38851, 38861, 38867, 38873,
+	38891, 38903, 38917, 38921, 38923, 38933, 38953, 38959,
+	38971, 38977, 38993, 39019, 39023, 39041, 39043, 39047,
+	39079, 39089, 39097, 39103, 39107, 39113, 39119, 39133,
+	39139, 39157, 39161, 39163, 39181, 39191, 39199, 39209,
+	39217, 39227, 39229, 39233, 39239, 39241, 39251, 39293,
+	39301, 39313, 39317, 39323, 39341, 39343, 39359, 39367,
+	39371, 39373, 39383, 39397, 39409, 39419, 39439, 39443,
+	39451, 39461, 39499, 39503, 39509, 39511, 39521, 39541,
+	39551, 39563, 39569, 39581, 39607, 39619, 39623, 39631,
+	39659, 39667, 39671, 39679, 39703, 39709, 39719, 39727,
+	39733, 39749, 39761, 39769, 39779, 39791, 39799, 39821,
+	39827, 39829, 39839, 39841, 39847, 39857, 39863, 39869,
+	39877, 39883, 39887, 39901, 39929, 39937, 39953, 39971,
+	39979, 39983, 39989, 40009, 40013, 40031, 40037, 40039,
+	40063, 40087, 40093, 40099, 40111, 40123, 40127, 40129,
+	40151, 40153, 40163, 40169, 40177, 40189, 40193, 40213,
+	40231, 40237, 40241, 40253, 40277, 40283, 40289, 40343,
+	40351, 40357, 40361, 40387, 40423, 40427, 40429, 40433,
+	40459, 40471, 40483, 40487, 40493, 40499, 40507, 40519,
+	40529, 40531, 40543, 40559, 40577, 40583, 40591, 40597,
+	40609, 40627, 40637, 40639, 40693, 40697, 40699, 40709,
+	40739, 40751, 40759, 40763, 40771, 40787, 40801, 40813,
+	40819, 40823, 40829, 40841, 40847, 40849, 40853, 40867,
+	40879, 40883, 40897, 40903, 40927, 40933, 40939, 40949,
+	40961, 40973, 40993, 41011, 41017, 41023, 41039, 41047,
+	41051, 41057, 41077, 41081, 41113, 41117, 41131, 41141,
+	41143, 41149, 41161, 41177, 41179, 41183, 41189, 41201,
+	41203, 41213, 41221, 41227, 41231, 41233, 41243, 41257,
+	41263, 41269, 41281, 41299, 41333, 41341, 41351, 41357,
+	41381, 41387, 41389, 41399, 41411, 41413, 41443, 41453,
+	41467, 41479, 41491, 41507, 41513, 41519, 41521, 41539,
+	41543, 41549, 41579, 41593, 41597, 41603, 41609, 41611,
+	41617, 41621, 41627, 41641, 41647, 41651, 41659, 41669,
+	41681, 41687, 41719, 41729, 41737, 41759, 41761, 41771,
+	41777, 41801, 41809, 41813, 41843, 41849, 41851, 41863,
+	41879, 41887, 41893, 41897, 41903, 41911, 41927, 41941,
+	41947, 41953, 41957, 41959, 41969, 41981, 41983, 41999,
+	42013, 42017, 42019, 42023, 42043, 42061, 42071, 42073,
+	42083, 42089, 42101, 42131, 42139, 42157, 42169, 42179,
+	42181, 42187, 42193, 42197, 42209, 42221, 42223, 42227,
+	42239, 42257, 42281, 42283, 42293, 42299, 42307, 42323,
+	42331, 42337, 42349, 42359, 42373, 42379, 42391, 42397,
+	42403, 42407, 42409, 42433, 42437, 42443, 42451, 42457,
+	42461, 42463, 42467, 42473, 42487, 42491, 42499, 42509,
+	42533, 42557, 42569, 42571, 42577, 42589, 42611, 42641,
+	42643, 42649, 42667, 42677, 42683, 42689, 42697, 42701,
+	42703, 42709, 42719, 42727, 42737, 42743, 42751, 42767,
+	42773, 42787, 42793, 42797, 42821, 42829, 42839, 42841,
+	42853, 42859, 42863, 42899, 42901, 42923, 42929, 42937,
+	42943, 42953, 42961, 42967, 42979, 42989, 43003, 43013,
+	43019, 43037, 43049, 43051, 43063, 43067, 43093, 43103,
+	43117, 43133, 43151, 43159, 43177, 43189, 43201, 43207,
+	43223, 43237, 43261, 43271, 43283, 43291, 43313, 43319,
+	43321, 43331, 43391, 43397, 43399, 43403, 43411, 43427,
+	43441, 43451, 43457, 43481, 43487, 43499, 43517, 43541,
+	43543, 43573, 43577, 43579, 43591, 43597, 43607, 43609,
+	43613, 43627, 43633, 43649, 43651, 43661, 43669, 43691,
+	43711, 43717, 43721, 43753, 43759, 43777, 43781, 43783,
+	43787, 43789, 43793, 43801, 43853, 43867, 43889, 43891,
+	43913, 43933, 43943, 43951, 43961, 43963, 43969, 43973,
+	43987, 43991, 43997, 44017, 44021, 44027, 44029, 44041,
+	44053, 44059, 44071, 44087, 44089, 44101, 44111, 44119,
+	44123, 44129, 44131, 44159, 44171, 44179, 44189, 44201,
+	44203, 44207, 44221, 44249, 44257, 44263, 44267, 44269,
+	44273, 44279, 44281, 44293, 44351, 44357, 44371, 44381,
+	44383, 44389, 44417, 44449, 44453, 44483, 44491, 44497,
+	44501, 44507, 44519, 44531, 44533, 44537, 44543, 44549,
+	44563, 44579, 44587, 44617, 44621, 44623, 44633, 44641,
+	44647, 44651, 44657, 44683, 44687, 44699, 44701, 44711,
+	44729, 44741, 44753, 44771, 44773, 44777, 44789, 44797,
+	44809, 44819, 44839, 44843, 44851, 44867, 44879, 44887,
+	44893, 44909, 44917, 44927, 44939, 44953, 44959, 44963,
+	44971, 44983, 44987, 45007, 45013, 45053, 45061, 45077,
+	45083, 45119, 45121, 45127, 45131, 45137, 45139, 45161,
+	45179, 45181, 45191, 45197, 45233, 45247, 45259, 45263,
+	45281, 45289, 45293, 45307, 45317, 45319, 45329, 45337,
+	45341, 45343, 45361, 45377, 45389, 45403, 45413, 45427,
+	45433, 45439, 45481, 45491, 45497, 45503, 45523, 45533,
+	45541, 45553, 45557, 45569, 45587, 45589, 45599, 45613,
+	45631, 45641, 45659, 45667, 45673, 45677, 45691, 45697,
+	45707, 45737, 45751, 45757, 45763, 45767, 45779, 45817,
+	45821, 45823, 45827, 45833, 45841, 45853, 45863, 45869,
+	45887, 45893, 45943, 45949, 45953, 45959, 45971, 45979,
+	45989, 46021, 46027, 46049, 46051, 46061, 46073, 46091,
+	46093, 46099, 46103, 46133, 46141, 46147, 46153, 46171,
+	46181, 46183, 46187, 46199, 46219, 46229, 46237, 46261,
+	46271, 46273, 46279, 46301, 46307, 46309, 46327, 46337,
 ];
 
 function
-factor_int(n)
-{
+	factor_int(n) {
 	var d, k, m;
 
 	n = Math.abs(n);
@@ -13800,8 +13361,7 @@ factor_int(n)
 	push_integer(1);
 }
 function
-find_denominator(p)
-{
+	find_denominator(p) {
 	var q;
 	p = cdr(p);
 	while (iscons(p)) {
@@ -13813,7 +13373,7 @@ find_denominator(p)
 	return 0;
 }
 function
-findf(p, q) // is q in p?
+	findf(p, q) // is q in p?
 {
 	var i, n;
 
@@ -13838,8 +13398,7 @@ findf(p, q) // is q in p?
 	return 0;
 }
 function
-fmtnum(n)
-{
+	fmtnum(n) {
 	n = Math.abs(n);
 
 	if (n > 0 && n < 0.0001)
@@ -13860,204 +13419,197 @@ const SMALL_ROMAN_FONT = 3;
 const SMALL_ITALIC_FONT = 4;
 
 function
-get_cap_height(font_num)
-{
+	get_cap_height(font_num) {
 	switch (font_num) {
-	case ROMAN_FONT:
-	case ITALIC_FONT:
-		return FONT_CAP_HEIGHT * FONT_SIZE / 2048;
-	case SMALL_ROMAN_FONT:
-	case SMALL_ITALIC_FONT:
-		return FONT_CAP_HEIGHT * SMALL_FONT_SIZE / 2048;
+		case ROMAN_FONT:
+		case ITALIC_FONT:
+			return FONT_CAP_HEIGHT * FONT_SIZE / 2048;
+		case SMALL_ROMAN_FONT:
+		case SMALL_ITALIC_FONT:
+			return FONT_CAP_HEIGHT * SMALL_FONT_SIZE / 2048;
 	}
 }
 
 function
-get_descent(font_num)
-{
+	get_descent(font_num) {
 	switch (font_num) {
-	case ROMAN_FONT:
-	case ITALIC_FONT:
-		return FONT_DESCENT * FONT_SIZE / 2048;
-	case SMALL_ROMAN_FONT:
-	case SMALL_ITALIC_FONT:
-		return FONT_DESCENT * SMALL_FONT_SIZE / 2048;
+		case ROMAN_FONT:
+		case ITALIC_FONT:
+			return FONT_DESCENT * FONT_SIZE / 2048;
+		case SMALL_ROMAN_FONT:
+		case SMALL_ITALIC_FONT:
+			return FONT_DESCENT * SMALL_FONT_SIZE / 2048;
 	}
 }
 
 const roman_descent_tab = [
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
-//	  ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
-	0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//	  ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
-//	@ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [   ] ^ _
-	1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,
+	//	@ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [   ] ^ _
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1,
 
-//	` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
-	0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,1,1,1,0,0,
+	//	` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0,
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // upper case greek
-	0,1,1,0,0,1,1,0,0,0,0,1,0,1,0,0,1,0,0,0,1,1,1,0, // lower case greek
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // upper case greek
+	0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, // lower case greek
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
 
 const italic_descent_tab = [
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
-//	  ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
-	0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//	  ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
-//	@ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [   ] ^ _
-	1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,
+	//	@ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [   ] ^ _
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1,
 
-//	` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
-	0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,1,1,1,0,0,
+	//	` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
+	0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0,
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // upper case greek
-	0,1,1,0,0,1,1,0,0,0,0,1,0,1,0,0,1,0,0,0,1,1,1,0, // lower case greek
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // upper case greek
+	0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, // lower case greek
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
 
 function
-get_char_depth(font_num, char_num)
-{
+	get_char_depth(font_num, char_num) {
 	switch (font_num) {
-	case ROMAN_FONT:
-	case SMALL_ROMAN_FONT:
-		return get_descent(font_num) * roman_descent_tab[char_num];
-	case ITALIC_FONT:
-	case SMALL_ITALIC_FONT:
-		return get_descent(font_num) * italic_descent_tab[char_num];
+		case ROMAN_FONT:
+		case SMALL_ROMAN_FONT:
+			return get_descent(font_num) * roman_descent_tab[char_num];
+		case ITALIC_FONT:
+		case SMALL_ITALIC_FONT:
+			return get_descent(font_num) * italic_descent_tab[char_num];
 	}
 }
 
 const roman_width_tab = [
 
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
 
-512,682,836,1024,1024,1706,1593,369,		// printable ascii
-682,682,1024,1155,512,682,512,569,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,569,569,1155,1155,1155,909,
-1886,1479,1366,1366,1479,1251,1139,1479,
-1479,682,797,1479,1251,1821,1479,1479,
-1139,1479,1366,1139,1251,1479,1479,1933,
-1479,1479,1251,682,569,682,961,1024,
-682,909,1024,909,1024,909,682,1024,
-1024,569,569,1024,569,1593,1024,1024,
-1024,1024,682,797,569,1024,1024,1479,
-1024,1024,909,983,410,983,1108,1593,
+	512, 682, 836, 1024, 1024, 1706, 1593, 369,		// printable ascii
+	682, 682, 1024, 1155, 512, 682, 512, 569,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 569, 569, 1155, 1155, 1155, 909,
+	1886, 1479, 1366, 1366, 1479, 1251, 1139, 1479,
+	1479, 682, 797, 1479, 1251, 1821, 1479, 1479,
+	1139, 1479, 1366, 1139, 1251, 1479, 1479, 1933,
+	1479, 1479, 1251, 682, 569, 682, 961, 1024,
+	682, 909, 1024, 909, 1024, 909, 682, 1024,
+	1024, 569, 569, 1024, 569, 1593, 1024, 1024,
+	1024, 1024, 682, 797, 569, 1024, 1024, 1479,
+	1024, 1024, 909, 983, 410, 983, 1108, 1593,
 
-1479,1366,1184,1253,1251,1251,1479,1479,	// upper case greek
-682,1479,1485,1821,1479,1317,1479,1479,
-1139,1192,1251,1479,1497,1479,1511,1522,
+	1479, 1366, 1184, 1253, 1251, 1251, 1479, 1479,	// upper case greek
+	682, 1479, 1485, 1821, 1479, 1317, 1479, 1479,
+	1139, 1192, 1251, 1479, 1497, 1479, 1511, 1522,
 
-1073,1042,905,965,860,848,1071,981,		// lower case greek
-551,1032,993,1098,926,913,1024,1034,
-1022,1104,823,1014,1182,909,1282,1348,
+	1073, 1042, 905, 965, 860, 848, 1071, 981,		// lower case greek
+	551, 1032, 993, 1098, 926, 913, 1024, 1034,
+	1022, 1104, 823, 1014, 1182, 909, 1282, 1348,
 
-1024,1155,1155,1155,1124,1124,1012,909,		// other symbols
+	1024, 1155, 1155, 1155, 1124, 1124, 1012, 909,		// other symbols
 
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
-909,909,909,909,909,909,909,909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
+	909, 909, 909, 909, 909, 909, 909, 909,
 ];
 
 const italic_width_tab = [
 
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
 
-512,682,860,1024,1024,1706,1593,438,		// printable ascii
-682,682,1024,1382,512,682,512,569,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,682,682,1382,1382,1382,1024,
-1884,1251,1251,1366,1479,1251,1251,1479,
-1479,682,909,1366,1139,1706,1366,1479,
-1251,1479,1251,1024,1139,1479,1251,1706,
-1251,1139,1139,797,569,797,864,1024,
-682,1024,1024,909,1024,909,569,1024,
-1024,569,569,909,569,1479,1024,1024,
-1024,1024,797,797,569,1024,909,1366,
-909,909,797,819,563,819,1108,1593,
+	512, 682, 860, 1024, 1024, 1706, 1593, 438,		// printable ascii
+	682, 682, 1024, 1382, 512, 682, 512, 569,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 682, 682, 1382, 1382, 1382, 1024,
+	1884, 1251, 1251, 1366, 1479, 1251, 1251, 1479,
+	1479, 682, 909, 1366, 1139, 1706, 1366, 1479,
+	1251, 1479, 1251, 1024, 1139, 1479, 1251, 1706,
+	1251, 1139, 1139, 797, 569, 797, 864, 1024,
+	682, 1024, 1024, 909, 1024, 909, 569, 1024,
+	1024, 569, 569, 909, 569, 1479, 1024, 1024,
+	1024, 1024, 797, 797, 569, 1024, 909, 1366,
+	909, 909, 797, 819, 563, 819, 1108, 1593,
 
-1251,1251,1165,1253,1251,1139,1479,1479,	// upper case greek
-682,1366,1237,1706,1366,1309,1479,1479,
-1251,1217,1139,1139,1559,1251,1440,1481,
+	1251, 1251, 1165, 1253, 1251, 1139, 1479, 1479,	// upper case greek
+	682, 1366, 1237, 1706, 1366, 1309, 1479, 1479,
+	1251, 1217, 1139, 1139, 1559, 1251, 1440, 1481,
 
-1075,1020,807,952,807,829,1016,1006,		// lower case greek
-569,983,887,1028,909,877,1024,1026,
-983,1010,733,940,1133,901,1272,1446,
+	1075, 1020, 807, 952, 807, 829, 1016, 1006,		// lower case greek
+	569, 983, 887, 1028, 909, 877, 1024, 1026,
+	983, 1010, 733, 940, 1133, 901, 1272, 1446,
 
-1024,1382,1382,1382,1124,1124,1012,1024,	// other symbols
+	1024, 1382, 1382, 1382, 1124, 1124, 1012, 1024,	// other symbols
 
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
-1024,1024,1024,1024,1024,1024,1024,1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
+	1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,
 ];
 
 function
-get_char_width(font_num, char_num)
-{
+	get_char_width(font_num, char_num) {
 	switch (font_num) {
-	case ROMAN_FONT:
-		return FONT_SIZE * roman_width_tab[char_num] / 2048;
-	case ITALIC_FONT:
-		return FONT_SIZE * italic_width_tab[char_num] / 2048;
-	case SMALL_ROMAN_FONT:
-		return SMALL_FONT_SIZE * roman_width_tab[char_num] / 2048;
-	case SMALL_ITALIC_FONT:
-		return SMALL_FONT_SIZE * italic_width_tab[char_num] / 2048;
+		case ROMAN_FONT:
+			return FONT_SIZE * roman_width_tab[char_num] / 2048;
+		case ITALIC_FONT:
+			return FONT_SIZE * italic_width_tab[char_num] / 2048;
+		case SMALL_ROMAN_FONT:
+			return SMALL_FONT_SIZE * roman_width_tab[char_num] / 2048;
+		case SMALL_ITALIC_FONT:
+			return SMALL_FONT_SIZE * italic_width_tab[char_num] / 2048;
 	}
 }
 
 function
-get_xheight(font_num)
-{
+	get_xheight(font_num) {
 	switch (font_num) {
-	case ROMAN_FONT:
-	case ITALIC_FONT:
-		return FONT_XHEIGHT * FONT_SIZE / 2048;
-	case SMALL_ROMAN_FONT:
-	case SMALL_ITALIC_FONT:
-		return FONT_XHEIGHT * SMALL_FONT_SIZE / 2048;
+		case ROMAN_FONT:
+		case ITALIC_FONT:
+			return FONT_XHEIGHT * FONT_SIZE / 2048;
+		case SMALL_ROMAN_FONT:
+		case SMALL_ITALIC_FONT:
+			return FONT_XHEIGHT * SMALL_FONT_SIZE / 2048;
 	}
 }
 
 function
-get_operator_height(font_num)
-{
+	get_operator_height(font_num) {
 	return get_cap_height(font_num) / 2;
 }
 function
-get_binding(p1)
-{
+	get_binding(p1) {
 	var p2;
 	if (!isusersymbol(p1))
 		stopf("symbol error");
@@ -14067,8 +13619,7 @@ get_binding(p1)
 	return p2;
 }
 function
-get_usrfunc(p)
-{
+	get_usrfunc(p) {
 	if (!isusersymbol(p))
 		stopf("symbol error");
 	p = usrfunc[p.printname];
@@ -14077,16 +13628,14 @@ get_usrfunc(p)
 	return p;
 }
 function
-infixform_subexpr(p)
-{
+	infixform_subexpr(p) {
 	infixform_write("(");
 	infixform_expr(p);
 	infixform_write(")");
 }
 
 function
-infixform_expr(p)
-{
+	infixform_expr(p) {
 	if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p))))
 		infixform_write("-");
 	if (car(p) == symbol(ADD))
@@ -14096,8 +13645,7 @@ infixform_expr(p)
 }
 
 function
-infixform_expr_nib(p)
-{
+	infixform_expr_nib(p) {
 	infixform_term(cadr(p));
 	p = cddr(p);
 	while (iscons(p)) {
@@ -14111,8 +13659,7 @@ infixform_expr_nib(p)
 }
 
 function
-infixform_term(p)
-{
+	infixform_term(p) {
 	if (car(p) == symbol(MULTIPLY))
 		infixform_term_nib(p);
 	else
@@ -14120,8 +13667,7 @@ infixform_term(p)
 }
 
 function
-infixform_term_nib(p)
-{
+	infixform_term_nib(p) {
 	if (find_denominator(p)) {
 		infixform_numerators(p);
 		infixform_write(" / ");
@@ -14148,8 +13694,7 @@ infixform_term_nib(p)
 }
 
 function
-infixform_numerators(p)
-{
+	infixform_numerators(p) {
 	var k, q, s;
 
 	k = 0;
@@ -14181,8 +13726,7 @@ infixform_numerators(p)
 }
 
 function
-infixform_denominators(p)
-{
+	infixform_denominators(p) {
 	var k, n, q, s;
 
 	n = count_denominators(p);
@@ -14226,8 +13770,7 @@ infixform_denominators(p)
 }
 
 function
-infixform_factor(p)
-{
+	infixform_factor(p) {
 	if (isrational(p)) {
 		infixform_rational(p);
 		return;
@@ -14338,8 +13881,7 @@ infixform_factor(p)
 }
 
 function
-infixform_power(p)
-{
+	infixform_power(p) {
 	if (cadr(p) == symbol(EXP1)) {
 		infixform_write("exp(");
 		infixform_expr(caddr(p));
@@ -14380,8 +13922,7 @@ infixform_power(p)
 // p = y^x where x is a negative number
 
 function
-infixform_reciprocal(p)
-{
+	infixform_reciprocal(p) {
 	infixform_write("1 / "); // numerator
 	if (isminusone(caddr(p))) {
 		p = cadr(p);
@@ -14394,15 +13935,13 @@ infixform_reciprocal(p)
 }
 
 function
-infixform_factorial(p)
-{
+	infixform_factorial(p) {
 	infixform_base(cadr(p));
 	infixform_write("!");
 }
 
 function
-infixform_index(p)
-{
+	infixform_index(p) {
 	infixform_base(cadr(p));
 	infixform_write("[");
 	p = cddr(p);
@@ -14419,8 +13958,7 @@ infixform_index(p)
 }
 
 function
-infixform_arglist(p)
-{
+	infixform_arglist(p) {
 	infixform_write("(");
 	p = cdr(p);
 	if (iscons(p)) {
@@ -14438,8 +13976,7 @@ infixform_arglist(p)
 // sign is not emitted
 
 function
-infixform_rational(p)
-{
+	infixform_rational(p) {
 	var s;
 
 	s = bignum_itoa(p.a);
@@ -14457,8 +13994,7 @@ infixform_rational(p)
 // sign is not emitted
 
 function
-infixform_double(p)
-{
+	infixform_double(p) {
 	var i, j, k, s;
 
 	s = fmtnum(p.d);
@@ -14512,8 +14048,7 @@ infixform_double(p)
 }
 
 function
-infixform_base(p)
-{
+	infixform_base(p) {
 	if (isnum(p))
 		infixform_numeric_base(p);
 	else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER) || car(p) == symbol(FACTORIAL))
@@ -14523,8 +14058,7 @@ infixform_base(p)
 }
 
 function
-infixform_numeric_base(p)
-{
+	infixform_numeric_base(p) {
 	if (isposint(p))
 		infixform_rational(p);
 	else
@@ -14534,8 +14068,7 @@ infixform_numeric_base(p)
 // sign is not emitted
 
 function
-infixform_numeric_exponent(p)
-{
+	infixform_numeric_exponent(p) {
 	if (isdouble(p)) {
 		infixform_write("(");
 		infixform_double(p);
@@ -14554,14 +14087,12 @@ infixform_numeric_exponent(p)
 }
 
 function
-infixform_tensor(p)
-{
+	infixform_tensor(p) {
 	infixform_tensor_nib(p, 0, 0);
 }
 
 function
-infixform_tensor_nib(p, d, k)
-{
+	infixform_tensor_nib(p, d, k) {
 	var i, n, span;
 
 	if (d == p.dim.length) {
@@ -14594,13 +14125,11 @@ infixform_tensor_nib(p, d, k)
 }
 
 function
-infixform_write(s)
-{
+	infixform_write(s) {
 	outbuf += s;
 }
 function
-init()
-{
+	init() {
 	eval_level = 0;
 	expanding = 1;
 	drawing = 0;
@@ -14628,21 +14157,20 @@ init()
 	imaginaryunit = pop();
 }
 var init_script = [
-"i = sqrt(-1)",
-"grad(f) = d(f,(x,y,z))",
-"cross(a,b) = (dot(a[2],b[3])-dot(a[3],b[2]),dot(a[3],b[1])-dot(a[1],b[3]),dot(a[1],b[2])-dot(a[2],b[1]))",
-"curl(u) = (d(u[3],y) - d(u[2],z),d(u[1],z) - d(u[3],x),d(u[2],x) - d(u[1],y))",
-"div(u) = d(u[1],x) + d(u[2],y) + d(u[3],z)",
-"laguerre(x,n,m) = (n + m)! sum(k,0,n,(-x)^k / ((n - k)! (m + k)! k!))",
-"legendre(f,n,m,x) = eval(1 / (2^n n!) (1 - x^2)^(m/2) d((x^2 - 1)^n,x,n + m),x,f)",
-"hermite(x,n) = (-1)^n exp(x^2) d(exp(-x^2),x,n)",
-"binomial(n,k) = n! / k! / (n - k)!",
-"choose(n,k) = n! / k! / (n - k)!",
+	"i = sqrt(-1)",
+	"grad(f) = d(f,(x,y,z))",
+	"cross(a,b) = (dot(a[2],b[3])-dot(a[3],b[2]),dot(a[3],b[1])-dot(a[1],b[3]),dot(a[1],b[2])-dot(a[2],b[1]))",
+	"curl(u) = (d(u[3],y) - d(u[2],z),d(u[1],z) - d(u[3],x),d(u[2],x) - d(u[1],y))",
+	"div(u) = d(u[1],x) + d(u[2],y) + d(u[3],z)",
+	"laguerre(x,n,m) = (n + m)! sum(k,0,n,(-x)^k / ((n - k)! (m + k)! k!))",
+	"legendre(f,n,m,x) = eval(1 / (2^n n!) (1 - x^2)^(m/2) d((x^2 - 1)^n,x,n + m),x,f)",
+	"hermite(x,n) = (-1)^n exp(x^2) d(exp(-x^2),x,n)",
+	"binomial(n,k) = n! / k! / (n - k)!",
+	"choose(n,k) = n! / k! / (n - k)!",
 ];
 
 function
-initscript()
-{
+	initscript() {
 	var i, n;
 
 	n = init_script.length;
@@ -14654,76 +14182,62 @@ initscript()
 	}
 }
 function
-inrange(x, y)
-{
+	inrange(x, y) {
 	return x > -0.5 && x < DRAW_WIDTH + 0.5 && y > -0.5 && y < DRAW_HEIGHT + 0.5;
 }
 function
-isalnum(n)
-{
+	isalnum(n) {
 	return isalpha(n) || isdigit(n);
 }
 function
-isalpha(n)
-{
+	isalpha(n) {
 	return (n >= 65 && n <= 90) || (n >= 97 && n <= 122);
 }
 function
-iscons(p)
-{
+	iscons(p) {
 	if ("car" in p)
 		return 1;
 	else
 		return 0;
 }
 function
-isdigit(n)
-{
+	isdigit(n) {
 	return n >= 48 && n <= 57;
 }
 function
-isdouble(p)
-{
+	isdouble(p) {
 	return "d" in p;
 }
 function
-iskeyword(p)
-{
+	iskeyword(p) {
 	return issymbol(p) && p.func != eval_user_symbol;
 }
 function
-isnum(p)
-{
+	isnum(p) {
 	return isrational(p) || isdouble(p);
 }
 function
-isrational(p)
-{
+	isrational(p) {
 	return "a" in p;
 }
 function
-isstring(p)
-{
+	isstring(p) {
 	return "string" in p;
 }
 function
-issymbol(p)
-{
+	issymbol(p) {
 	return "func" in p;
 }
 function
-istensor(p)
-{
+	istensor(p) {
 	return "elem" in p;
 }
 function
-isusersymbol(p)
-{
+	isusersymbol(p) {
 	return issymbol(p) && p.func == eval_user_symbol;
 }
 function
-lengthf(p)
-{
+	lengthf(p) {
 	var n = 0;
 	while (iscons(p)) {
 		n++;
@@ -14732,31 +14246,27 @@ lengthf(p)
 	return n;
 }
 function
-lessp(p1, p2)
-{
+	lessp(p1, p2) {
 	return cmp(p1, p2) < 0;
 }
 function
-list(n)
-{
+	list(n) {
 	var i;
 	push_symbol(NIL);
 	for (i = 0; i < n; i++)
 		cons();
 }
 function
-lookup(s)
-{
+	lookup(s) {
 	var p = symtab[s];
 	if (p == undefined) {
-		p = {printname:s, func:eval_user_symbol};
+		p = { printname: s, func: eval_user_symbol };
 		symtab[s] = p;
 	}
 	return p;
 }
 function
-normalize_polar(EXPO)
-{
+	normalize_polar(EXPO) {
 	var h, p1;
 	if (car(EXPO) == symbol(ADD)) {
 		h = stack.length;
@@ -14779,8 +14289,7 @@ normalize_polar(EXPO)
 }
 
 function
-normalize_polar_term(EXPO)
-{
+	normalize_polar_term(EXPO) {
 	var R;
 
 	// exp(i pi) = -1
@@ -14799,8 +14308,7 @@ normalize_polar_term(EXPO)
 }
 
 function
-normalize_polar_term_rational(R)
-{
+	normalize_polar_term_rational(R) {
 	var n;
 
 	// R = R mod 2
@@ -14834,84 +14342,83 @@ normalize_polar_term_rational(R)
 
 	switch (n % 4) {
 
-	case 0:
-		if (iszero(R))
-			push_integer(1);
-		else {
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push(R);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-		}
-		break;
+		case 0:
+			if (iszero(R))
+				push_integer(1);
+			else {
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push(R);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+			}
+			break;
 
-	case 1:
-		if (iszero(R))
-			push(imaginaryunit);
-		else {
-			push_symbol(MULTIPLY);
-			push(imaginaryunit);
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push(R);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-			list(3);
-		}
-		break;
+		case 1:
+			if (iszero(R))
+				push(imaginaryunit);
+			else {
+				push_symbol(MULTIPLY);
+				push(imaginaryunit);
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push(R);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 2:
-		if (iszero(R))
-			push_integer(-1);
-		else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push(R);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-			list(3);
-		}
-		break;
+		case 2:
+			if (iszero(R))
+				push_integer(-1);
+			else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push(R);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 3:
-		if (iszero(R)) {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push(imaginaryunit);
-			list(3);
-		} else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push(imaginaryunit);
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push(R);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-			list(4);
-		}
-		break;
+		case 3:
+			if (iszero(R)) {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push(imaginaryunit);
+				list(3);
+			} else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push(imaginaryunit);
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push(R);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+				list(4);
+			}
+			break;
 	}
 }
 
 function
-normalize_polar_term_double(R)
-{
+	normalize_polar_term_double(R) {
 	var coeff, n, r;
 
 	coeff = R.d;
@@ -14931,83 +14438,82 @@ normalize_polar_term_double(R)
 
 	switch (n % 4) {
 
-	case 0:
-		if (r == 0)
-			push_integer(1);
-		else {
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push_double(r);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-		}
-		break;
+		case 0:
+			if (r == 0)
+				push_integer(1);
+			else {
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push_double(r);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+			}
+			break;
 
-	case 1:
-		if (r == 0)
-			push(imaginaryunit);
-		else {
-			push_symbol(MULTIPLY);
-			push(imaginaryunit);
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push_double(r);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-			list(3);
-		}
-		break;
+		case 1:
+			if (r == 0)
+				push(imaginaryunit);
+			else {
+				push_symbol(MULTIPLY);
+				push(imaginaryunit);
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push_double(r);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 2:
-		if (r == 0)
-			push_integer(-1);
-		else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push_double(r);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-			list(3);
-		}
-		break;
+		case 2:
+			if (r == 0)
+				push_integer(-1);
+			else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push_double(r);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 3:
-		if (r == 0) {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push(imaginaryunit);
-			list(3);
-		} else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push(imaginaryunit);
-			push_symbol(POWER);
-			push_symbol(EXP1);
-			push_symbol(MULTIPLY);
-			push_double(r);
-			push(imaginaryunit);
-			push_symbol(PI);
-			list(4);
-			list(3);
-			list(4);
-		}
-		break;
+		case 3:
+			if (r == 0) {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push(imaginaryunit);
+				list(3);
+			} else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push(imaginaryunit);
+				push_symbol(POWER);
+				push_symbol(EXP1);
+				push_symbol(MULTIPLY);
+				push_double(r);
+				push(imaginaryunit);
+				push_symbol(PI);
+				list(4);
+				list(3);
+				list(4);
+			}
+			break;
 	}
 }
 function
-numden()
-{
+	numden() {
 	var p0, p1, p2;
 
 	p1 = pop();
@@ -15032,8 +14538,7 @@ numden()
 // returns 1 with divisor on stack, otherwise returns 0
 
 function
-numden_find_divisor(p)
-{
+	numden_find_divisor(p) {
 	if (car(p) == symbol(ADD)) {
 		p = cdr(p);
 		while (iscons(p)) {
@@ -15048,8 +14553,7 @@ numden_find_divisor(p)
 }
 
 function
-numden_find_divisor_term(p)
-{
+	numden_find_divisor_term(p) {
 	if (car(p) == symbol(MULTIPLY)) {
 		p = cdr(p);
 		while (iscons(p)) {
@@ -15064,8 +14568,7 @@ numden_find_divisor_term(p)
 }
 
 function
-numden_find_divisor_factor(p)
-{
+	numden_find_divisor_factor(p) {
 	if (isrational(p) && !isinteger(p)) {
 		push_bignum(1, bignum_copy(p.b), bignum_int(1));
 		return 1;
@@ -15088,8 +14591,7 @@ numden_find_divisor_factor(p)
 }
 
 function
-numden_cancel_factor()
-{
+	numden_cancel_factor() {
 	var h, p1, p2;
 
 	p2 = pop(); // numerator
@@ -15115,8 +14617,7 @@ numden_cancel_factor()
 	multiply();
 }
 function
-partition_term()
-{
+	partition_term() {
 	var h, n;
 	var p1, F, X;
 
@@ -15168,8 +14669,7 @@ partition_term()
 // https://github.com/ghewgill/picomath
 
 function
-erf(x)
-{
+	erf(x) {
 	if (x == 0)
 		return 0;
 
@@ -15188,27 +14688,24 @@ erf(x)
 	x = Math.abs(x);
 
 	// A&S formula 7.1.26
-	var t = 1.0/(1.0 + p*x);
-	var y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-x*x);
+	var t = 1.0 / (1.0 + p * x);
+	var y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
 
-	return sign*y;
+	return sign * y;
 }
 
 function
-erfc(x)
-{
+	erfc(x) {
 	return 1.0 - erf(x);
 }
 function
-pop()
-{
+	pop() {
 	if (stack.length == 0)
 		stopf("stack error");
 	return stack.pop();
 }
 function
-pop_double()
-{
+	pop_double() {
 	var a, b, d, p;
 
 	p = pop();
@@ -15229,8 +14726,7 @@ pop_double()
 	return d;
 }
 function
-pop_integer()
-{
+	pop_integer() {
 	var n, p;
 
 	p = pop();
@@ -15248,8 +14744,7 @@ pop_integer()
 	return n;
 }
 function
-power_complex_double(BASE, EXPO, X, Y)
-{
+	power_complex_double(BASE, EXPO, X, Y) {
 	var expo, r, theta, x, y;
 
 	push(X);
@@ -15277,8 +14772,7 @@ power_complex_double(BASE, EXPO, X, Y)
 	add();
 }
 function
-power_complex_minus(X, Y, n)
-{
+	power_complex_minus(X, Y, n) {
 	var i, R, PX, PY;
 
 	// R = X^2 + Y^2
@@ -15341,8 +14835,7 @@ power_complex_minus(X, Y, n)
 	add();
 }
 function
-power_complex_number(BASE, EXPO)
-{
+	power_complex_number(BASE, EXPO) {
 	var n, X, Y;
 
 	// prefixform(2 + 3 i) = (add 2 (multiply 3 (power -1 1/2)))
@@ -15396,8 +14889,7 @@ power_complex_number(BASE, EXPO)
 		push_integer(1);
 }
 function
-power_complex_plus(X, Y, n)
-{
+	power_complex_plus(X, Y, n) {
 	var i, PX, PY;
 
 	PX = X;
@@ -15434,8 +14926,7 @@ power_complex_plus(X, Y, n)
 	add();
 }
 function
-power_complex_rational(BASE, EXPO, X, Y)
-{
+	power_complex_rational(BASE, EXPO, X, Y) {
 	// calculate sqrt(X^2 + Y^2) ^ (1/2 * EXPO)
 
 	push(X);
@@ -15467,8 +14958,7 @@ power_complex_rational(BASE, EXPO, X, Y)
 	multiply();
 }
 function
-power_minusone(EXPO)
-{
+	power_minusone(EXPO) {
 	// optimization for i
 
 	if (isequalq(EXPO, 1, 2)) {
@@ -15504,8 +14994,7 @@ power_minusone(EXPO)
 }
 
 function
-normalize_clock_rational(EXPO)
-{
+	normalize_clock_rational(EXPO) {
 	var n, R;
 
 	// R = EXPO mod 2
@@ -15539,68 +15028,67 @@ normalize_clock_rational(EXPO)
 
 	switch (n) {
 
-	case 0:
-		if (iszero(R))
-			push_integer(1);
-		else {
-			push_symbol(POWER);
-			push_integer(-1);
-			push(R);
-			list(3);
-		}
-		break;
+		case 0:
+			if (iszero(R))
+				push_integer(1);
+			else {
+				push_symbol(POWER);
+				push_integer(-1);
+				push(R);
+				list(3);
+			}
+			break;
 
-	case 1:
-		if (iszero(R))
-			push(imaginaryunit);
-		else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push_symbol(POWER);
-			push_integer(-1);
-			push(R);
-			push_rational(-1, 2);
-			add();
-			list(3);
-			list(3);
-		}
-		break;
+		case 1:
+			if (iszero(R))
+				push(imaginaryunit);
+			else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push_symbol(POWER);
+				push_integer(-1);
+				push(R);
+				push_rational(-1, 2);
+				add();
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 2:
-		if (iszero(R))
-			push_integer(-1);
-		else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push_symbol(POWER);
-			push_integer(-1);
-			push(R);
-			list(3);
-			list(3);
-		}
-		break;
+		case 2:
+			if (iszero(R))
+				push_integer(-1);
+			else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push_symbol(POWER);
+				push_integer(-1);
+				push(R);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 3:
-		if (iszero(R)) {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push(imaginaryunit);
-			list(3);
-		} else {
-			push_symbol(POWER);
-			push_integer(-1);
-			push(R);
-			push_rational(-1, 2);
-			add();
-			list(3);
-		}
-		break;
+		case 3:
+			if (iszero(R)) {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push(imaginaryunit);
+				list(3);
+			} else {
+				push_symbol(POWER);
+				push_integer(-1);
+				push(R);
+				push_rational(-1, 2);
+				add();
+				list(3);
+			}
+			break;
 	}
 }
 
 function
-normalize_clock_double(EXPO)
-{
+	normalize_clock_double(EXPO) {
 	var expo, n, r;
 
 	expo = EXPO.d;
@@ -15620,63 +15108,62 @@ normalize_clock_double(EXPO)
 
 	switch (n) {
 
-	case 0:
-		if (r == 0)
-			push_integer(1);
-		else {
-			push_symbol(POWER);
-			push_integer(-1);
-			push_double(r);
-			list(3);
-		}
-		break;
+		case 0:
+			if (r == 0)
+				push_integer(1);
+			else {
+				push_symbol(POWER);
+				push_integer(-1);
+				push_double(r);
+				list(3);
+			}
+			break;
 
-	case 1:
-		if (r == 0)
-			push(imaginaryunit);
-		else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push_symbol(POWER);
-			push_integer(-1);
-			push_double(r - 0.5);
-			list(3);
-			list(3);
-		}
-		break;
+		case 1:
+			if (r == 0)
+				push(imaginaryunit);
+			else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push_symbol(POWER);
+				push_integer(-1);
+				push_double(r - 0.5);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 2:
-		if (r == 0)
-			push_integer(-1);
-		else {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push_symbol(POWER);
-			push_integer(-1);
-			push_double(r);
-			list(3);
-			list(3);
-		}
-		break;
+		case 2:
+			if (r == 0)
+				push_integer(-1);
+			else {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push_symbol(POWER);
+				push_integer(-1);
+				push_double(r);
+				list(3);
+				list(3);
+			}
+			break;
 
-	case 3:
-		if (r == 0) {
-			push_symbol(MULTIPLY);
-			push_integer(-1);
-			push(imaginaryunit);
-			list(3);
-		} else {
-			push_symbol(POWER);
-			push_integer(-1);
-			push_double(r - 0.5);
-			list(3);
-		}
-		break;
+		case 3:
+			if (r == 0) {
+				push_symbol(MULTIPLY);
+				push_integer(-1);
+				push(imaginaryunit);
+				list(3);
+			} else {
+				push_symbol(POWER);
+				push_integer(-1);
+				push_double(r - 0.5);
+				list(3);
+			}
+			break;
 	}
 }
 function
-power_natural_number(EXPO)
-{
+	power_natural_number(EXPO) {
 	var x, y;
 
 	// exp(x + i y) = exp(x) (cos(y) + i sin(y))
@@ -15721,8 +15208,7 @@ power_natural_number(EXPO)
 // BASE and EXPO are numbers
 
 function
-power_numbers(BASE, EXPO)
-{
+	power_numbers(BASE, EXPO) {
 	var a, b, h, i, n, p1, p2;
 
 	// n^0
@@ -15843,8 +15329,7 @@ power_numbers(BASE, EXPO)
 // BASE is an integer
 
 function
-power_numbers_factor(BASE, EXPO)
-{
+	power_numbers_factor(BASE, EXPO) {
 	var a, b, n, q, r, p0;
 
 	if (isminusone(BASE)) {
@@ -15929,8 +15414,7 @@ power_numbers_factor(BASE, EXPO)
 }
 
 function
-power_double(BASE, EXPO)
-{
+	power_double(BASE, EXPO) {
 	var base, d, expo;
 
 	push(BASE);
@@ -15960,8 +15444,7 @@ power_double(BASE, EXPO)
 // BASE is a sum of terms
 
 function
-power_sum(BASE, EXPO)
-{
+	power_sum(BASE, EXPO) {
 	var h, i, n, p1, p2;
 
 	if (iscomplexnumber(BASE) && isnum(EXPO)) {
@@ -16007,8 +15490,7 @@ power_sum(BASE, EXPO)
 	}
 }
 function
-iszero(p)
-{
+	iszero(p) {
 	var i;
 	if (isrational(p))
 		return bignum_iszero(p.a);
@@ -16024,14 +15506,12 @@ iszero(p)
 }
 
 function
-isequaln(p, n)
-{
+	isequaln(p, n) {
 	return isequalq(p, n, 1);
 }
 
 function
-isequalq(p, a, b)
-{
+	isequalq(p, a, b) {
 	var sign;
 	if (isrational(p)) {
 		if (a < 0) {
@@ -16047,62 +15527,52 @@ isequalq(p, a, b)
 }
 
 function
-isplusone(p)
-{
+	isplusone(p) {
 	return isequaln(p, 1);
 }
 
 function
-isminusone(p)
-{
+	isminusone(p) {
 	return isequaln(p, -1);
 }
 
 function
-isinteger(p)
-{
+	isinteger(p) {
 	return isrational(p) && bignum_equal(p.b, 1);
 }
 
 function
-isfraction(p)
-{
+	isfraction(p) {
 	return isrational(p) && !bignum_equal(p.b, 1);
 }
 
 function
-isposint(p)
-{
+	isposint(p) {
 	return isinteger(p) && !isnegativenumber(p);
 }
 
 function
-isexponential(p)
-{
+	isexponential(p) {
 	return car(p) == symbol(POWER) && cadr(p) == symbol(EXP1);
 }
 
 function
-isradicalterm(p)
-{
+	isradicalterm(p) {
 	return car(p) == symbol(MULTIPLY) && isnum(cadr(p)) && isradical(caddr(p));
 }
 
 function
-isradical(p)
-{
+	isradical(p) {
 	return car(p) == symbol(POWER) && isposint(cadr(p)) && isfraction(caddr(p));
 }
 
 function
-isnegativeterm(p)
-{
+	isnegativeterm(p) {
 	return isnegativenumber(p) || (car(p) == symbol(MULTIPLY) && isnegativenumber(cadr(p)));
 }
 
 function
-isnegativenumber(p)
-{
+	isnegativenumber(p) {
 	if (isrational(p))
 		return p.sign == -1;
 	else if (isdouble(p))
@@ -16112,8 +15582,7 @@ isnegativenumber(p)
 }
 
 function
-isimaginaryterm(p)
-{
+	isimaginaryterm(p) {
 	if (isimaginaryfactor(p))
 		return 1;
 	if (car(p) == symbol(MULTIPLY)) {
@@ -16128,46 +15597,39 @@ isimaginaryterm(p)
 }
 
 function
-isimaginaryfactor(p)
-{
+	isimaginaryfactor(p) {
 	return car(p) == symbol(POWER) && isminusone(cadr(p));
 }
 
 function
-iscomplexnumber(p)
-{
+	iscomplexnumber(p) {
 	return isimaginarynumber(p) || (lengthf(p) == 3 && car(p) == symbol(ADD) && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
 function
-isimaginarynumber(p)
-{
+	isimaginarynumber(p) {
 	return isimaginaryunit(p) || (lengthf(p) == 3 && car(p) == symbol(MULTIPLY) && isnum(cadr(p)) && isimaginaryunit(caddr(p)));
 }
 
 function
-isimaginaryunit(p)
-{
+	isimaginaryunit(p) {
 	return car(p) == symbol(POWER) && isminusone(cadr(p)) && isequalq(caddr(p), 1, 2);
 }
 
 function
-isoneoversqrttwo(p)
-{
+	isoneoversqrttwo(p) {
 	return car(p) == symbol(POWER) && isequaln(cadr(p), 2) && isequalq(caddr(p), -1, 2);
 }
 
 function
-isminusoneoversqrttwo(p)
-{
+	isminusoneoversqrttwo(p) {
 	return lengthf(p) == 3 && car(p) == symbol(MULTIPLY) && isminusone(cadr(p)) && isoneoversqrttwo(caddr(p));
 }
 
 // x + y * (-1)^(1/2) where x and y are double?
 
 function
-isdoublez(p)
-{
+	isdoublez(p) {
 	if (car(p) == symbol(ADD)) {
 
 		if (lengthf(p) != 3)
@@ -16203,8 +15665,7 @@ isdoublez(p)
 }
 
 function
-isdenominator(p)
-{
+	isdenominator(p) {
 	if (car(p) == symbol(POWER) && isnegativenumber(caddr(p)))
 		return 1;
 	else if (isrational(p) && !bignum_equal(p.b, 1))
@@ -16214,8 +15675,7 @@ isdenominator(p)
 }
 
 function
-isnumerator(p)
-{
+	isnumerator(p) {
 	if (car(p) == symbol(POWER) && isnegativenumber(caddr(p)))
 		return 0;
 	else if (isrational(p) && bignum_equal(p.a, 1))
@@ -16225,8 +15685,7 @@ isnumerator(p)
 }
 
 function
-hasdouble(p)
-{
+	hasdouble(p) {
 	if (iscons(p)) {
 		p = cdr(p);
 		while (iscons(p)) {
@@ -16240,8 +15699,7 @@ hasdouble(p)
 }
 
 function
-isdenormalpolar(p)
-{
+	isdenormalpolar(p) {
 	if (car(p) == symbol(ADD)) {
 		p = cdr(p);
 		while (iscons(p)) {
@@ -16258,8 +15716,7 @@ isdenormalpolar(p)
 // returns 1 if term is (coeff * i * pi) and coeff < 0 or coeff >= 1/2
 
 function
-isdenormalpolarterm(p)
-{
+	isdenormalpolarterm(p) {
 	if (car(p) != symbol(MULTIPLY))
 		return 0;
 
@@ -16286,14 +15743,12 @@ isdenormalpolarterm(p)
 }
 
 function
-issquarematrix(p)
-{
+	issquarematrix(p) {
 	return istensor(p) && p.dim.length == 2 && p.dim[0] == p.dim[1];
 }
 
 function
-issmallinteger(p)
-{
+	issmallinteger(p) {
 	if (isinteger(p))
 		return bignum_issmallnum(p.a);
 
@@ -16303,8 +15758,7 @@ issmallinteger(p)
 	return 0;
 }
 function
-prefixform(p)
-{
+	prefixform(p) {
 	var s;
 	if (iscons(p)) {
 		outbuf += "(";
@@ -16342,8 +15796,7 @@ prefixform(p)
 		outbuf += " ? ";
 }
 function
-print_infixform(p)
-{
+	print_infixform(p) {
 	outbuf = "";
 	infixform_expr(p);
 	infixform_write("\n");
@@ -16354,8 +15807,7 @@ const BLUE = 2;
 const RED = 3;
 
 function
-printbuf(s, color)
-{
+	printbuf(s, color) {
 	s = s.replace(/&/g, "&amp;");
 	s = s.replace(/</g, "&lt;");
 	s = s.replace(/>/g, "&gt;");
@@ -16367,32 +15819,30 @@ printbuf(s, color)
 
 	switch (color) {
 
-	case BLACK:
-		s = "<span style='color:black;font-family:courier'>" + s + "</span>";
-		break;
+		case BLACK:
+			s = "<span style='color:black;font-family:courier'>" + s + "</span>";
+			break;
 
-	case BLUE:
-		s = "<span style='color:blue;font-family:courier'>" + s + "</span>";
-		break;
+		case BLUE:
+			s = "<span style='color:blue;font-family:courier'>" + s + "</span>";
+			break;
 
-	case RED:
-		s = "<span style='color:red;font-family:courier'>" + s + "</span>";
-		break;
+		case RED:
+			s = "<span style='color:red;font-family:courier'>" + s + "</span>";
+			break;
 	}
 
-	stdout.innerHTML += s;
+	console.log(s);
 }
 function
-printname(p)
-{
+	printname(p) {
 	if ("printname" in p)
 		return p.printname;
 	else
 		return "?";
 }
 function
-promote_tensor()
-{
+	promote_tensor() {
 	var i, j, k, ndim1, ndim2, nelem1, nelem2, p1, p2, p3;
 
 	p1 = pop();
@@ -16450,23 +15900,19 @@ promote_tensor()
 	push(p3);
 }
 function
-push(a)
-{
+	push(a) {
 	stack.push(a);
 }
 function
-push_double(d)
-{
-	push({d:d});
+	push_double(d) {
+	push({ d: d });
 }
 function
-push_integer(n)
-{
+	push_integer(n) {
 	push_rational(n, 1);
 }
 function
-push_rational(a, b)
-{
+	push_rational(a, b) {
 	var sign;
 
 	if (a < 0)
@@ -16482,18 +15928,15 @@ push_rational(a, b)
 	push_bignum(sign, a, b);
 }
 function
-push_string(s)
-{
-	push({string:s});
+	push_string(s) {
+	push({ string: s });
 }
 function
-push_symbol(p)
-{
+	push_symbol(p) {
 	push(symbol(p));
 }
 function
-restore_symbol()
-{
+	restore_symbol() {
 	var p1, p2, p3;
 	p3 = frame.pop();
 	p2 = frame.pop();
@@ -16503,8 +15946,7 @@ restore_symbol()
 /* exported run */
 
 function
-run()
-{
+	run() {
 	try {
 		run_nib();
 	} catch (errmsg) {
@@ -16517,18 +15959,13 @@ run()
 }
 
 function
-run_nib()
-{
+	run_nib() {
 	var k = 0;
-
-	inbuf = document.getElementById("stdin").value;
-	stdout = document.getElementById("stdout");
-	stdout.innerHTML = "";
 
 	init();
 	initscript();
 
-	for (;;) {
+	for (; ;) {
 
 		k = scan_inbuf(k);
 
@@ -16539,8 +15976,7 @@ run_nib()
 	}
 }
 function
-sample(F, T, t)
-{
+	sample(F, T, t) {
 	var x, y, p1, X, Y;
 
 	push_double(t);
@@ -16576,11 +16012,10 @@ sample(F, T, t)
 	x = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
 	y = DRAW_HEIGHT * (y - ymin) / (ymax - ymin);
 
-	draw_array.push({t:t, x:x, y:y});
+	draw_array.push({ t: t, x: x, y: y });
 }
 function
-save_symbol(p)
-{
+	save_symbol(p) {
 	frame.push(p);
 	frame.push(get_binding(p));
 	frame.push(get_usrfunc(p));
@@ -16622,22 +16057,19 @@ var token_index;
 var token_buf;
 
 function
-scan(s, k)
-{
+	scan(s, k) {
 	scan_mode = 0;
 	return scan_nib(s, k);
 }
 
 function
-scan1(s)
-{
+	scan1(s) {
 	scan_mode = 1; // mode for table of integrals
 	return scan_nib(s, 0);
 }
 
 function
-scan_nib(s, k)
-{
+	scan_nib(s, k) {
 	instring = s;
 	scan_index = k;
 	scan_level = 0;
@@ -16656,8 +16088,7 @@ scan_nib(s, k)
 }
 
 function
-scan_stmt()
-{
+	scan_stmt() {
 	scan_comparison();
 	if (token == T_EQUAL) {
 		get_token_skip_newlines(); // get token after =
@@ -16669,27 +16100,26 @@ scan_stmt()
 }
 
 function
-scan_comparison()
-{
+	scan_comparison() {
 	scan_expression();
 	switch (token) {
-	case T_EQ:
-		push_symbol(TESTEQ); // ==
-		break;
-	case T_LTEQ:
-		push_symbol(TESTLE);
-		break;
-	case T_GTEQ:
-		push_symbol(TESTGE);
-		break;
-	case T_LESS:
-		push_symbol(TESTLT);
-		break;
-	case T_GREATER:
-		push_symbol(TESTGT);
-		break;
-	default:
-		return;
+		case T_EQ:
+			push_symbol(TESTEQ); // ==
+			break;
+		case T_LTEQ:
+			push_symbol(TESTLE);
+			break;
+		case T_GTEQ:
+			push_symbol(TESTGE);
+			break;
+		case T_LESS:
+			push_symbol(TESTLT);
+			break;
+		case T_GREATER:
+			push_symbol(TESTGT);
+			break;
+		default:
+			return;
 	}
 	swap();
 	get_token_skip_newlines(); // get token after rel op
@@ -16698,8 +16128,7 @@ scan_comparison()
 }
 
 function
-scan_expression()
-{
+	scan_expression() {
 	var h = stack.length, t = token;
 	if (token == T_PLUS || token == T_HYPHEN)
 		get_token_skip_newlines();
@@ -16722,8 +16151,7 @@ scan_expression()
 }
 
 function
-scan_term()
-{
+	scan_term() {
 	var h = stack.length, t;
 
 	scan_power();
@@ -16750,27 +16178,25 @@ scan_term()
 }
 
 function
-scan_factor_pending()
-{
+	scan_factor_pending() {
 	switch (token) {
-	case T_ASTERISK:
-	case T_SLASH:
-	case T_PARENLEFT:
-	case T_SYMBOL:
-	case T_FUNCTION:
-	case T_INTEGER:
-	case T_DOUBLE:
-	case T_STRING:
-		return 1;
-	default:
-		break;
+		case T_ASTERISK:
+		case T_SLASH:
+		case T_PARENLEFT:
+		case T_SYMBOL:
+		case T_FUNCTION:
+		case T_INTEGER:
+		case T_DOUBLE:
+		case T_STRING:
+			return 1;
+		default:
+			break;
 	}
 	return 0;
 }
 
 function
-scan_power()
-{
+	scan_power() {
 	scan_factor();
 
 	if (token == T_ASCIICIRCUM) {
@@ -16785,46 +16211,45 @@ scan_power()
 }
 
 function
-scan_factor()
-{
+	scan_factor() {
 	var a, b, d, h;
 
 	h = stack.length;
 
 	switch (token) {
 
-	case T_PARENLEFT:
-		scan_subexpr();
-		break;
+		case T_PARENLEFT:
+			scan_subexpr();
+			break;
 
-	case T_SYMBOL:
-		scan_symbol();
-		break;
+		case T_SYMBOL:
+			scan_symbol();
+			break;
 
-	case T_FUNCTION:
-		scan_function_call();
-		break;
+		case T_FUNCTION:
+			scan_function_call();
+			break;
 
-	case T_INTEGER:
-		a = bignum_atoi(token_buf);
-		b = bignum_int(1);
-		push_bignum(1, a, b);
-		get_token();
-		break;
+		case T_INTEGER:
+			a = bignum_atoi(token_buf);
+			b = bignum_int(1);
+			push_bignum(1, a, b);
+			get_token();
+			break;
 
-	case T_DOUBLE:
-		d = parseFloat(token_buf);
-		push_double(d);
-		get_token();
-		break;
+		case T_DOUBLE:
+			d = parseFloat(token_buf);
+			push_double(d);
+			get_token();
+			break;
 
-	case T_STRING:
-		scan_string();
-		break;
+		case T_STRING:
+			scan_string();
+			break;
 
-	default:
-		scan_error("expected operand");
-		break;
+		default:
+			scan_error("expected operand");
+			break;
 	}
 
 	// index
@@ -16863,22 +16288,21 @@ scan_factor()
 }
 
 function
-scan_symbol()
-{
+	scan_symbol() {
 	if (scan_mode == 1 && token_buf.length == 1) {
 		switch (token_buf[0]) {
-		case "a":
-			push_symbol(SA);
-			break;
-		case "b":
-			push_symbol(SB);
-			break;
-		case "x":
-			push_symbol(SX);
-			break;
-		default:
-			push(lookup(token_buf));
-			break;
+			case "a":
+				push_symbol(SA);
+				break;
+			case "b":
+				push_symbol(SB);
+				break;
+			case "x":
+				push_symbol(SX);
+				break;
+			default:
+				push(lookup(token_buf));
+				break;
 		}
 	} else
 		push(lookup(token_buf));
@@ -16886,15 +16310,13 @@ scan_symbol()
 }
 
 function
-scan_string()
-{
+	scan_string() {
 	push_string(token_buf);
 	get_token();
 }
 
 function
-scan_function_call()
-{
+	scan_function_call() {
 	var h = stack.length;
 	scan_level++;
 	push(lookup(token_buf)); // push function name
@@ -16919,8 +16341,7 @@ scan_function_call()
 }
 
 function
-scan_subexpr()
-{
+	scan_subexpr() {
 	var h, i, n, p;
 	h = stack.length;
 	scan_level++;
@@ -16945,16 +16366,14 @@ scan_subexpr()
 }
 
 function
-get_token_skip_newlines()
-{
+	get_token_skip_newlines() {
 	scan_level++;
 	get_token();
 	scan_level--;
 }
 
 function
-get_token()
-{
+	get_token() {
 	get_token_nib();
 
 	if (scan_level)
@@ -16963,8 +16382,7 @@ get_token()
 }
 
 function
-get_token_nib()
-{
+	get_token_nib() {
 	// skip spaces
 
 	while (scan_index < instring.length && instring.charCodeAt(scan_index) != 10 && instring.charCodeAt(scan_index) != 13 && (instring.charCodeAt(scan_index) < 33 || instring.charCodeAt(scan_index) > 126))
@@ -17069,21 +16487,18 @@ get_token_nib()
 }
 
 function
-update_token_buf(j, k)
-{
+	update_token_buf(j, k) {
 	token_buf = instring.substring(j, k);
 }
 
 function
-scan_error(errmsg)
-{
+	scan_error(errmsg) {
 	trace2 = scan_index;
 	stopf(errmsg);
 }
 
 function
-static_negate()
-{
+	static_negate() {
 	var p1;
 
 	p1 = pop();
@@ -17116,8 +16531,7 @@ static_negate()
 }
 
 function
-static_reciprocate()
-{
+	static_reciprocate() {
 	var p1, p2;
 
 	p2 = pop();
@@ -17165,8 +16579,7 @@ static_reciprocate()
 	list(3);
 }
 function
-scan_inbuf(k)
-{
+	scan_inbuf(k) {
 	trace1 = k;
 	k = scan(inbuf, k);
 	if (k) {
@@ -17176,16 +16589,14 @@ scan_inbuf(k)
 	return k;
 }
 function
-set_symbol(p1, p2, p3)
-{
+	set_symbol(p1, p2, p3) {
 	if (!isusersymbol(p1))
 		stopf("symbol error");
 	binding[p1.printname] = p2;
 	usrfunc[p1.printname] = p3;
 }
 function
-setup_final(F, T)
-{
+	setup_final(F, T) {
 	var p1;
 
 	push_double(tmin);
@@ -17202,8 +16613,7 @@ setup_final(F, T)
 	}
 }
 function
-setup_trange()
-{
+	setup_trange() {
 	var p1, p2, p3;
 
 	tmin = -Math.PI;
@@ -17231,8 +16641,7 @@ setup_trange()
 	tmax = pop_double();
 }
 function
-setup_xrange()
-{
+	setup_xrange() {
 	var p1, p2, p3;
 
 	xmin = -10;
@@ -17260,8 +16669,7 @@ setup_xrange()
 	xmax = pop_double();
 }
 function
-setup_yrange()
-{
+	setup_yrange() {
 	var p1, p2, p3;
 
 	ymin = -10;
@@ -17289,19 +16697,16 @@ setup_yrange()
 	ymax = pop_double();
 }
 function
-sort(n)
-{
+	sort(n) {
 	var t = stack.splice(stack.length - n).sort(cmp);
 	stack = stack.concat(t);
 }
 function
-stopf(errmsg)
-{
+	stopf(errmsg) {
 	throw errmsg;
 }
 function
-swap()
-{
+	swap() {
 	var p1, p2;
 	p2 = pop();
 	p1 = pop();
@@ -17309,13 +16714,11 @@ swap()
 	push(p1);
 }
 function
-symbol(s)
-{
+	symbol(s) {
 	return symtab[s];
 }
 function
-trace_input()
-{
+	trace_input() {
 	var p1;
 	p1 = get_binding(symbol(TRACE));
 	if (p1 != symbol(TRACE) && !iszero(p1))
@@ -17340,133 +16743,151 @@ var trace1;
 var trace2;
 
 var symtab = {
-"abs":		{printname:ABS,		func:eval_abs},
-"adj":		{printname:ADJ,		func:eval_adj},
-"and":		{printname:AND,		func:eval_and},
-"arccos":	{printname:ARCCOS,	func:eval_arccos},
-"arccosh":	{printname:ARCCOSH,	func:eval_arccosh},
-"arcsin":	{printname:ARCSIN,	func:eval_arcsin},
-"arcsinh":	{printname:ARCSINH,	func:eval_arcsinh},
-"arctan":	{printname:ARCTAN,	func:eval_arctan},
-"arctanh":	{printname:ARCTANH,	func:eval_arctanh},
-"arg":		{printname:ARG,		func:eval_arg},
-"binding":	{printname:BINDING,	func:eval_binding},
-"ceiling":	{printname:CEILING,	func:eval_ceiling},
-"check":	{printname:CHECK,	func:eval_check},
-"circexp":	{printname:CIRCEXP,	func:eval_circexp},
-"clear":	{printname:CLEAR,	func:eval_clear},
-"clock":	{printname:CLOCK,	func:eval_clock},
-"cofactor":	{printname:COFACTOR,	func:eval_cofactor},
-"conj":		{printname:CONJ,	func:eval_conj},
-"contract":	{printname:CONTRACT,	func:eval_contract},
-"cos":		{printname:COS,		func:eval_cos},
-"cosh":		{printname:COSH,	func:eval_cosh},
-"defint":	{printname:DEFINT,	func:eval_defint},
-"denominator":	{printname:DENOMINATOR,	func:eval_denominator},
-"derivative":	{printname:DERIVATIVE,	func:eval_derivative},
-"det":		{printname:DET,		func:eval_det},
-"dim":		{printname:DIM,		func:eval_dim},
-"do":		{printname:DO,		func:eval_do},
-"dot":		{printname:DOT,		func:eval_dot},
-"draw":		{printname:DRAW,	func:eval_draw},
-"eigenvec":	{printname:EIGENVEC,	func:eval_eigenvec},
-"erf":		{printname:ERF,		func:eval_erf},
-"erfc":		{printname:ERFC,	func:eval_erfc},
-"eval":		{printname:EVAL,	func:eval_eval},
-"exit":		{printname:EXIT,	func:eval_exit},
-"exp":		{printname:EXP,		func:eval_exp},
-"expcos":	{printname:EXPCOS,	func:eval_expcos},
-"expcosh":	{printname:EXPCOSH,	func:eval_expcosh},
-"expsin":	{printname:EXPSIN,	func:eval_expsin},
-"expsinh":	{printname:EXPSINH,	func:eval_expsinh},
-"exptan":	{printname:EXPTAN,	func:eval_exptan},
-"exptanh":	{printname:EXPTANH,	func:eval_exptanh},
-"factorial":	{printname:FACTORIAL,	func:eval_factorial},
-"float":	{printname:FLOAT,	func:eval_float},
-"floor":	{printname:FLOOR,	func:eval_floor},
-"for":		{printname:FOR,		func:eval_for},
-"hadamard":	{printname:HADAMARD,	func:eval_hadamard},
-"imag":		{printname:IMAG,	func:eval_imag},
-"infixform":	{printname:INFIXFORM,	func:eval_infixform},
-"inner":	{printname:INNER,	func:eval_inner},
-"integral":	{printname:INTEGRAL,	func:eval_integral},
-"inv":		{printname:INV,		func:eval_inv},
-"kronecker":	{printname:KRONECKER,	func:eval_kronecker},
-"log":		{printname:LOG,		func:eval_log},
-"mag":		{printname:MAG,		func:eval_mag},
-"minor":	{printname:MINOR,	func:eval_minor},
-"minormatrix":	{printname:MINORMATRIX,	func:eval_minormatrix},
-"mod":		{printname:MOD,		func:eval_mod},
-"nil":		{printname:NIL,		func:eval_nil},
-"noexpand":	{printname:NOEXPAND,	func:eval_noexpand},
-"not":		{printname:NOT,		func:eval_not},
-"nroots":	{printname:NROOTS,	func:eval_nroots},
-"number":	{printname:NUMBER,	func:eval_number},
-"numerator":	{printname:NUMERATOR,	func:eval_numerator},
-"or":		{printname:OR,		func:eval_or},
-"outer":	{printname:OUTER,	func:eval_outer},
-"polar":	{printname:POLAR,	func:eval_polar},
-"prefixform":	{printname:PREFIXFORM,	func:eval_prefixform},
-"print":	{printname:PRINT,	func:eval_print},
-"product":	{printname:PRODUCT,	func:eval_product},
-"quote":	{printname:QUOTE,	func:eval_quote},
-"rank":		{printname:RANK,	func:eval_rank},
-"rationalize":	{printname:RATIONALIZE,	func:eval_rationalize},
-"real":		{printname:REAL,	func:eval_real},
-"rect":		{printname:RECT,	func:eval_rect},
-"roots":	{printname:ROOTS,	func:eval_roots},
-"rotate":	{printname:ROTATE,	func:eval_rotate},
-"run":		{printname:RUN,		func:eval_run},
-"sgn":		{printname:SGN,		func:eval_sgn},
-"simplify":	{printname:SIMPLIFY,	func:eval_simplify},
-"sin":		{printname:SIN,		func:eval_sin},
-"sinh":		{printname:SINH,	func:eval_sinh},
-"sqrt":		{printname:SQRT,	func:eval_sqrt},
-"status":	{printname:STATUS,	func:eval_status},
-"stop":		{printname:STOP,	func:eval_stop},
-"subst":	{printname:SUBST,	func:eval_subst},
-"sum":		{printname:SUM,		func:eval_sum},
-"tan":		{printname:TAN,		func:eval_tan},
-"tanh":		{printname:TANH,	func:eval_tanh},
-"taylor":	{printname:TAYLOR,	func:eval_taylor},
-"test":		{printname:TEST,	func:eval_test},
-"testeq":	{printname:TESTEQ,	func:eval_testeq},
-"testge":	{printname:TESTGE,	func:eval_testge},
-"testgt":	{printname:TESTGT,	func:eval_testgt},
-"testle":	{printname:TESTLE,	func:eval_testle},
-"testlt":	{printname:TESTLT,	func:eval_testlt},
-"transpose":	{printname:TRANSPOSE,	func:eval_transpose},
-"unit":		{printname:UNIT,	func:eval_unit},
-"zero":		{printname:ZERO,	func:eval_zero},
+	"abs": { printname: ABS, func: eval_abs },
+	"adj": { printname: ADJ, func: eval_adj },
+	"and": { printname: AND, func: eval_and },
+	"arccos": { printname: ARCCOS, func: eval_arccos },
+	"arccosh": { printname: ARCCOSH, func: eval_arccosh },
+	"arcsin": { printname: ARCSIN, func: eval_arcsin },
+	"arcsinh": { printname: ARCSINH, func: eval_arcsinh },
+	"arctan": { printname: ARCTAN, func: eval_arctan },
+	"arctanh": { printname: ARCTANH, func: eval_arctanh },
+	"arg": { printname: ARG, func: eval_arg },
+	"binding": { printname: BINDING, func: eval_binding },
+	"ceiling": { printname: CEILING, func: eval_ceiling },
+	"check": { printname: CHECK, func: eval_check },
+	"circexp": { printname: CIRCEXP, func: eval_circexp },
+	"clear": { printname: CLEAR, func: eval_clear },
+	"clock": { printname: CLOCK, func: eval_clock },
+	"cofactor": { printname: COFACTOR, func: eval_cofactor },
+	"conj": { printname: CONJ, func: eval_conj },
+	"contract": { printname: CONTRACT, func: eval_contract },
+	"cos": { printname: COS, func: eval_cos },
+	"cosh": { printname: COSH, func: eval_cosh },
+	"defint": { printname: DEFINT, func: eval_defint },
+	"denominator": { printname: DENOMINATOR, func: eval_denominator },
+	"derivative": { printname: DERIVATIVE, func: eval_derivative },
+	"det": { printname: DET, func: eval_det },
+	"dim": { printname: DIM, func: eval_dim },
+	"do": { printname: DO, func: eval_do },
+	"dot": { printname: DOT, func: eval_dot },
+	"draw": { printname: DRAW, func: eval_draw },
+	"eigenvec": { printname: EIGENVEC, func: eval_eigenvec },
+	"erf": { printname: ERF, func: eval_erf },
+	"erfc": { printname: ERFC, func: eval_erfc },
+	"eval": { printname: EVAL, func: eval_eval },
+	"exit": { printname: EXIT, func: eval_exit },
+	"exp": { printname: EXP, func: eval_exp },
+	"expcos": { printname: EXPCOS, func: eval_expcos },
+	"expcosh": { printname: EXPCOSH, func: eval_expcosh },
+	"expsin": { printname: EXPSIN, func: eval_expsin },
+	"expsinh": { printname: EXPSINH, func: eval_expsinh },
+	"exptan": { printname: EXPTAN, func: eval_exptan },
+	"exptanh": { printname: EXPTANH, func: eval_exptanh },
+	"factorial": { printname: FACTORIAL, func: eval_factorial },
+	"float": { printname: FLOAT, func: eval_float },
+	"floor": { printname: FLOOR, func: eval_floor },
+	"for": { printname: FOR, func: eval_for },
+	"hadamard": { printname: HADAMARD, func: eval_hadamard },
+	"imag": { printname: IMAG, func: eval_imag },
+	"infixform": { printname: INFIXFORM, func: eval_infixform },
+	"inner": { printname: INNER, func: eval_inner },
+	"integral": { printname: INTEGRAL, func: eval_integral },
+	"inv": { printname: INV, func: eval_inv },
+	"kronecker": { printname: KRONECKER, func: eval_kronecker },
+	"log": { printname: LOG, func: eval_log },
+	"mag": { printname: MAG, func: eval_mag },
+	"minor": { printname: MINOR, func: eval_minor },
+	"minormatrix": { printname: MINORMATRIX, func: eval_minormatrix },
+	"mod": { printname: MOD, func: eval_mod },
+	"nil": { printname: NIL, func: eval_nil },
+	"noexpand": { printname: NOEXPAND, func: eval_noexpand },
+	"not": { printname: NOT, func: eval_not },
+	"nroots": { printname: NROOTS, func: eval_nroots },
+	"number": { printname: NUMBER, func: eval_number },
+	"numerator": { printname: NUMERATOR, func: eval_numerator },
+	"or": { printname: OR, func: eval_or },
+	"outer": { printname: OUTER, func: eval_outer },
+	"polar": { printname: POLAR, func: eval_polar },
+	"prefixform": { printname: PREFIXFORM, func: eval_prefixform },
+	"print": { printname: PRINT, func: eval_print },
+	"product": { printname: PRODUCT, func: eval_product },
+	"quote": { printname: QUOTE, func: eval_quote },
+	"rank": { printname: RANK, func: eval_rank },
+	"rationalize": { printname: RATIONALIZE, func: eval_rationalize },
+	"real": { printname: REAL, func: eval_real },
+	"rect": { printname: RECT, func: eval_rect },
+	"roots": { printname: ROOTS, func: eval_roots },
+	"rotate": { printname: ROTATE, func: eval_rotate },
+	"run": { printname: RUN, func: eval_run },
+	"sgn": { printname: SGN, func: eval_sgn },
+	"simplify": { printname: SIMPLIFY, func: eval_simplify },
+	"sin": { printname: SIN, func: eval_sin },
+	"sinh": { printname: SINH, func: eval_sinh },
+	"sqrt": { printname: SQRT, func: eval_sqrt },
+	"status": { printname: STATUS, func: eval_status },
+	"stop": { printname: STOP, func: eval_stop },
+	"subst": { printname: SUBST, func: eval_subst },
+	"sum": { printname: SUM, func: eval_sum },
+	"tan": { printname: TAN, func: eval_tan },
+	"tanh": { printname: TANH, func: eval_tanh },
+	"taylor": { printname: TAYLOR, func: eval_taylor },
+	"test": { printname: TEST, func: eval_test },
+	"testeq": { printname: TESTEQ, func: eval_testeq },
+	"testge": { printname: TESTGE, func: eval_testge },
+	"testgt": { printname: TESTGT, func: eval_testgt },
+	"testle": { printname: TESTLE, func: eval_testle },
+	"testlt": { printname: TESTLT, func: eval_testlt },
+	"transpose": { printname: TRANSPOSE, func: eval_transpose },
+	"unit": { printname: UNIT, func: eval_unit },
+	"zero": { printname: ZERO, func: eval_zero },
 
-"+":		{printname:ADD,		func:eval_add},
-"*":		{printname:MULTIPLY,	func:eval_multiply},
-"^":		{printname:POWER,	func:eval_power},
-"[":		{printname:INDEX,	func:eval_index},
-"=":		{printname:SETQ,	func:eval_setq},
+	"+": { printname: ADD, func: eval_add },
+	"*": { printname: MULTIPLY, func: eval_multiply },
+	"^": { printname: POWER, func: eval_power },
+	"[": { printname: INDEX, func: eval_index },
+	"=": { printname: SETQ, func: eval_setq },
 
-"last":		{printname:LAST,	func:eval_user_symbol},
-"pi":		{printname:PI,		func:eval_user_symbol},
-"trace":	{printname:TRACE,	func:eval_user_symbol},
-"tty":		{printname:TTY,		func:eval_user_symbol},
+	"last": { printname: LAST, func: eval_user_symbol },
+	"pi": { printname: PI, func: eval_user_symbol },
+	"trace": { printname: TRACE, func: eval_user_symbol },
+	"tty": { printname: TTY, func: eval_user_symbol },
 
-"d":		{printname:D_LOWER,	func:eval_user_symbol},
-"i":		{printname:I_LOWER,	func:eval_user_symbol},
-"j":		{printname:J_LOWER,	func:eval_user_symbol},
-"x":		{printname:X_LOWER,	func:eval_user_symbol},
+	"d": { printname: D_LOWER, func: eval_user_symbol },
+	"i": { printname: I_LOWER, func: eval_user_symbol },
+	"j": { printname: J_LOWER, func: eval_user_symbol },
+	"x": { printname: X_LOWER, func: eval_user_symbol },
 
-"$e":		{printname:EXP1,	func:eval_user_symbol},
-"$a":		{printname:SA,		func:eval_user_symbol},
-"$b":		{printname:SB,		func:eval_user_symbol},
-"$x":		{printname:SX,		func:eval_user_symbol},
+	"$e": { printname: EXP1, func: eval_user_symbol },
+	"$a": { printname: SA, func: eval_user_symbol },
+	"$b": { printname: SB, func: eval_user_symbol },
+	"$x": { printname: SX, func: eval_user_symbol },
 
-"$1":		{printname:ARG1,	func:eval_user_symbol},
-"$2":		{printname:ARG2,	func:eval_user_symbol},
-"$3":		{printname:ARG3,	func:eval_user_symbol},
-"$4":		{printname:ARG4,	func:eval_user_symbol},
-"$5":		{printname:ARG5,	func:eval_user_symbol},
-"$6":		{printname:ARG6,	func:eval_user_symbol},
-"$7":		{printname:ARG7,	func:eval_user_symbol},
-"$8":		{printname:ARG8,	func:eval_user_symbol},
-"$9":		{printname:ARG9,	func:eval_user_symbol},
+	"$1": { printname: ARG1, func: eval_user_symbol },
+	"$2": { printname: ARG2, func: eval_user_symbol },
+	"$3": { printname: ARG3, func: eval_user_symbol },
+	"$4": { printname: ARG4, func: eval_user_symbol },
+	"$5": { printname: ARG5, func: eval_user_symbol },
+	"$6": { printname: ARG6, func: eval_user_symbol },
+	"$7": { printname: ARG7, func: eval_user_symbol },
+	"$8": { printname: ARG8, func: eval_user_symbol },
+	"$9": { printname: ARG9, func: eval_user_symbol },
 };
+
+const readline = require('readline').createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
+
+loopRead = function () {
+	readline.question('Enter an Eigenmath expression: ', (input) => {
+		if (input == ":q") {
+			return;
+		}
+		inbuf = input;
+		run_nib();
+		loopRead();
+	});
+};
+
+loopRead();
